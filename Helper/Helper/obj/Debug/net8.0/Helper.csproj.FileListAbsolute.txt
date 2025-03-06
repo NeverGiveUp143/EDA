@@ -1,0 +1,13 @@
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\bin\Debug\net8.0\Helper.deps.json
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\bin\Debug\net8.0\Helper.dll
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\bin\Debug\net8.0\Helper.pdb
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.csproj.AssemblyReference.cache
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.AssemblyInfoInputs.cache
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.AssemblyInfo.cs
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.csproj.CoreCompileInputs.cache
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.dll
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\refint\Helper.dll
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.pdb
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\ref\Helper.dll
+C:\Users\Venkatesh K\Source\Learnings\EDA\Helper\Helper\obj\Debug\net8.0\Helper.sourcelink.json
