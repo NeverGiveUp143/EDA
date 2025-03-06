@@ -1,6 +1,7 @@
 ﻿using EDACustomer.Repository.Interface;
 using EDADBContext;
 using EDADBContext.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace EDACustomer.Repository

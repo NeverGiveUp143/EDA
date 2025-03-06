@@ -12,21 +12,21 @@ namespace EDACustomer.Business
     public class CustomerBusiness : ICustomerBusiness
     {
         private readonly ICustomerRepository _customerRepository;
-        private readonly IConfigRepository _configRepository;
-        public CustomerBusiness(ICustomerRepository customerRepository, IConfigRepository configRepository)
+        private readonly IConfigBusiness _configBusiness;
+        public CustomerBusiness(ICustomerRepository customerRepository, IConfigBusiness configBusiness)
         {
             _customerRepository = customerRepository;
-            _configRepository = configRepository;
+            _configBusiness = configBusiness;
         }
 
         public async Task<List<CustomerModel>> GetCustomersList()
         {
             try
             {
-                string? configValue = _configRepository.GetConfigValue<string>(Constants.CustomerModelMapping);
-                List<ModelMapping> customerModelMappingsValue = !string.IsNullOrEmpty(configValue) ? JsonConvert.DeserializeObject<List<ModelMapping>>(configValue) ?? [] : [];
+                List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerModelMapping);
                 List<Customer> DbValue = await _customerRepository.GetCustomersList();
                 List<CustomerModel> customers = Helper.ModelMapper.SourceModelToTargetModel<Customer, CustomerModel>(DbValue, customerModelMappingsValue);
+
                 return customers;
             }
             catch (Exception ex)
@@ -37,8 +37,7 @@ namespace EDACustomer.Business
 
         public async Task<string> AddCustomer(CustomerModel customer)
         {
-            string? configValue = _configRepository.GetConfigValue<string>(Constants.CustomerModelMapping);
-            List<ModelMapping> customerModelMappingsValue = !string.IsNullOrEmpty(configValue) ? JsonConvert.DeserializeObject<List<ModelMapping>>(configValue) ?? [] : [];
+            List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerModelMapping);
             Customer customerDataObj = Helper.ModelMapper.SourceModelToTargetModel<CustomerModel, Customer>(customer, customerModelMappingsValue);
 
             return await _customerRepository.AddCustomer(customerDataObj);

@@ -1,6 +1,6 @@
-﻿using EDACustomer.Models;
-using EDACustomer.Repository.Interface;
+﻿using EDACustomer.Repository.Interface;
 using EDADBContext;
+using EDADBContext.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EDACustomer.Repository
@@ -13,15 +13,9 @@ namespace EDACustomer.Repository
             _dBContext = dBContext;
         }
 
-        public async Task<List<ProductModel>> GetProductsList()
+        public async Task<List<Product>> GetProductsList()
         {
-            return await _dBContext.Products.Select(x =>  new ProductModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                ProductId = x.ProductId,
-                Quantity = x.Quantity
-            }).ToListAsync();
+            return await _dBContext.Products.ToListAsync();
         }
     }
 }
