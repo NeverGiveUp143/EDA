@@ -11,12 +11,9 @@ namespace Helper
 
             if (sourceObjectList == null || sourceObjectList.Count == 0 ) return targetObjectList;
 
-            Type sourceType = typeof(TSource);
-            Type targetType = typeof(TTarget);
-
             foreach (var sourceObject in sourceObjectList)
             {
-                var targetObj = SourceModelToTargetModel<TSource, TTarget>(sourceObject,modelMappings); // Create new Target Object             
+                var targetObj = SourceModelToTargetModel<TSource, TTarget>(sourceObject,modelMappings); 
                 targetObjectList.Add(targetObj);
             }
             return targetObjectList;
