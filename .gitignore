@@ -1,0 +1,45 @@
+﻿# Ignore build and output directories
+bin/
+obj/
+
+# Ignore user-specific and IDE files
+.vscode/
+*.user
+*.suo
+*.cache
+*.csproj.user
+
+# Ignore Visual Studio specific files
+.vs/
+*.dbmdl
+*.pdb
+
+# Ignore logs, database, and temp files
+logs/
+*.log
+*.nlog
+*.ldb
+*.mdf
+*.ldf
+
+# Ignore npm package files (if using Node for front-end or dependencies)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Ignore secrets and environment-specific settings
+secrets.json
+appsettings.Development.json
+appsettings.Local.json
+.env
+
+# Ignore Docker files (if applicable)
+docker-compose.override.yml
+
+# Ignore publish & deployment artifacts
+publish/
+wwwroot/
+
+# Ignore Rider IDE files (if using JetBrains Rider)
+.idea/
+*.iml
