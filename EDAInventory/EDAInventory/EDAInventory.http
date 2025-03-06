@@ -1,6 +1,0 @@
-@EDAInventory_HostAddress = http://localhost:5099
-
-GET {{EDAInventory_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
