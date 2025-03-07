@@ -1,6 +1,6 @@
 ﻿namespace EDAInventory.Models
 {
-    public class Product
+    public class ProductModel
     {
     }
 }

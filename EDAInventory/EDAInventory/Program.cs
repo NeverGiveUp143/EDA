@@ -1,5 +1,18 @@
+using EDADBContext;
+using EDAInventory.Business;
+using EDAInventory.Business.Interface;
+using EDAInventory.Repository;
+using EDAInventory.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(connectionString, options => options.CommandTimeout((int)TimeSpan.FromMinutes(30).TotalSeconds)), ServiceLifetime.Transient);
+builder.Services.AddScoped<IProductBusiness, ProductBusiness>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IConfigRepository, ConfigRepository>();
+builder.Services.AddScoped<IConfigBusiness, ConfigBusiness>();
 // Add services to the container.
 
 builder.Services.AddControllers();

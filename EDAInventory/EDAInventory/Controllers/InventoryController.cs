@@ -1,5 +1,5 @@
-﻿using EDADBContext.Models;
-using EDAInventory.Business.Interface;
+﻿using EDAInventory.Business.Interface;
+using EDAInventory.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EDAInventory.Controllers
@@ -15,7 +15,7 @@ namespace EDAInventory.Controllers
         }
 
         [HttpGet("GetProducts")]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<List<ProductModel>>> GetProducts()
         {
             return await _productBusiness.GetProductsList();
         }
