@@ -38,8 +38,8 @@ namespace Helper
 
                 if (sourceProp != null && targetProp != null)
                 {
-                    object? rawValue = sourceProp.GetValue(sourceObject) ?? TypeConversionHelper.GetDefaultValue(targetProp.PropertyType);
-                    object value = rawValue ?? defaultValue;
+                    object? rawValue = sourceProp.GetValue(sourceObject);
+                    object value = TypeConversionHelper.ConvertToType(rawValue, targetProp.PropertyType?.FullName) ?? defaultValue;
 
                     targetProp.SetValue(targetObj, value);
                 }

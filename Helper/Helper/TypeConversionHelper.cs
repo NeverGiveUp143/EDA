@@ -2,9 +2,9 @@
 {
     public static class TypeConversionHelper
     {
-        public static object? ConvertToType(object value, string typeString)
+        public static object? ConvertToType(object? value, string? typeString)
         {
-            if (value == null)
+            if (value == null || string.IsNullOrWhiteSpace(typeString))
                 return null;
 
             Type? targetType = Type.GetType(typeString);

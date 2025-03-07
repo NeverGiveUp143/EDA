@@ -25,7 +25,7 @@ namespace EDACustomer.Business
         public List<T> GetMappingModel<T>(string key)
         {
             string? configValue = _configRepository.GetConfigValue<string>(key);
-            return  configValue != null ? JsonConvert.DeserializeObject<List<T>>(configValue) ?? [] : [];
+            return  !string.IsNullOrWhiteSpace(configValue) ? JsonConvert.DeserializeObject<List<T>>(configValue) ?? [] : [];
         }
     }
 }
