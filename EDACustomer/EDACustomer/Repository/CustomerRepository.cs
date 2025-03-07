@@ -20,19 +20,20 @@ namespace EDACustomer.Repository
 
         public async Task<string> AddCustomer(Customer customer)
         {
+            string tableName = Helper.Utlity.GetClassName<Customer>(customer);
             try
             {
                 if (customer != null)
                 {                   
                     _dBContext.Customer.Add(customer);
                     var result =  await _dBContext.SaveChangesAsync();
-                    return result > 0  ? string.Empty : Constants.DBInsertFailureMessage ;
+                    return result > 0  ? string.Empty : String.Format(Constants.DBInsertFailureMessage, tableName);
                 }
-                return Constants.CustomerDataNullErrorMessage;
+                return String.Format(Constants.DataNullErrorMessage, tableName);
             }
             catch (Exception ex)
             {
-              return Constants.ExceptionWhileInsertingData+ex.Message;
+                return String.Format(Constants.ExceptionWhileInsertingorUpdatingData + ex.Message, tableName);
             }
            
         }
