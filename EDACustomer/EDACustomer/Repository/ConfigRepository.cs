@@ -30,7 +30,7 @@ namespace EDACustomer.Repository
 
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+               
             }
 
             return configData;
