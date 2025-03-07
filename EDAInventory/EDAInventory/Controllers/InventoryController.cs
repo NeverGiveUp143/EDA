@@ -20,6 +20,18 @@ namespace EDAInventory.Controllers
             return await _productBusiness.GetProductsList();
         }
 
-        
+        [HttpPut("UpdateProducts")]
+        public async Task<ActionResult<string>> UpdateProduct(ProductModel product)
+        {
+            return await _productBusiness.UpsertProduct(product,true);
+        }
+
+
+        [HttpPost("AddProduct")]
+        public async Task<ActionResult<string>> AddProduct(ProductModel product)
+        {
+            return await _productBusiness.UpsertProduct(product);
+        }
+
     }
 }

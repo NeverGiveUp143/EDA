@@ -31,5 +31,21 @@ namespace EDAInventory.Business
             }
         }
 
+        public async Task<string> UpsertProduct(ProductModel product, bool IsUpdate = false)
+        {
+            string result = string.Empty;
+            try
+            {
+                List<ModelMapping> productModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.ProductModelMapping);
+                Product productDBObj = Helper.ModelMapper.SourceModelToTargetModel<ProductModel, Product>(product, productModelMappingsValue);
+                result = await _productRepository.UpsertProduct(productDBObj, IsUpdate);
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+            return result;
+        }
+        
     }
 }
