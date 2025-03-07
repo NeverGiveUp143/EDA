@@ -1,6 +1,4 @@
-﻿
-
-using EDACustomer.Models;
+﻿using EDACustomer.Models;
 
 namespace EDACustomer.Business.Interface
 {

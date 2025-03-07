@@ -1,6 +1,5 @@
 ﻿using EDACustomer.Business.Interface;
 using EDACustomer.Models;
-using EDACustomer.Repository;
 using EDACustomer.Repository.Interface;
 using EDADBContext.Models;
 using Helper.Models;

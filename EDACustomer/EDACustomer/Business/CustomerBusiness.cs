@@ -3,9 +3,6 @@ using EDACustomer.Models;
 using EDACustomer.Repository.Interface;
 using EDADBContext.Models;
 using Helper.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text.Json.Serialization;
 
 namespace EDACustomer.Business
 {

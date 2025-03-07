@@ -1,6 +1,5 @@
 ﻿using EDACustomer.Business.Interface;
 using EDACustomer.Repository.Interface;
-using Helper.Models;
 using Newtonsoft.Json;
 
 namespace EDACustomer.Business
