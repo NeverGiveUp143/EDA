@@ -5,6 +5,8 @@ using EDACustomer.Business.Interface;
 using EDACustomer.Repository.Interface;
 using EDACustomer.Repository;
 using EDACustomer.Business;
+using EDACustomer.Services.Interface;
+using EDACustomer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +20,14 @@ builder.Services.AddScoped<IProductBusiness, ProductBusiness>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IConfigRepository, ConfigRepository>();
 builder.Services.AddScoped<IConfigBusiness, ConfigBusiness>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCustomSignalR();
 
 var app = builder.Build();
 
@@ -34,10 +38,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseAuthorization();
 
+app.UseEndpoints(endpoints =>
+{
+    _ = endpoints.MapControllers();
+    _ = endpoints.MapCustomSignalR();
+});
+
+app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();

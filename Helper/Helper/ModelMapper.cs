@@ -4,7 +4,7 @@ namespace Helper
 {
     public static class ModelMapper
     {
-        public static List<TTarget> SourceModelToTargetModel<TSource, TTarget>(List<TSource> sourceObjectList, List<ModelMapping> modelMappings)
+        public static List<TTarget> SourceModelToTargetModel<TSource, TTarget>(List<TSource>? sourceObjectList, List<ModelMapping> modelMappings)
      where TTarget : class, new()
         {
             List<TTarget> targetObjectList = new();
@@ -19,7 +19,7 @@ namespace Helper
             return targetObjectList;
         }
 
-        public static TTarget SourceModelToTargetModel<TSource, TTarget>(TSource sourceObject, List<ModelMapping> modelMappings)
+        public static TTarget SourceModelToTargetModel<TSource, TTarget>(TSource? sourceObject, List<ModelMapping> modelMappings)
         where TTarget : class, new()
         {
             var targetObj = new TTarget();

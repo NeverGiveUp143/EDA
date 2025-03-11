@@ -29,7 +29,23 @@ namespace EDACustomer.Business
             }
             catch (Exception ex)
             {
-                return new List<ProductModel>();
+                return new ();
+            }
+        }
+
+        public async Task<ProductModel> GetProductById(Guid productId)
+        {
+            try
+            {
+                List<ModelMapping> productModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.ProductModelMapping);
+                Product? DbValue = await _productRepository.GetProductById(productId);
+                ProductModel product = Helper.ModelMapper.SourceModelToTargetModel<Product, ProductModel>(DbValue, productModelMappingsValue);
+
+                return product;
+            }
+            catch (Exception ex)
+            {
+                return new ();
             }
         }
     }

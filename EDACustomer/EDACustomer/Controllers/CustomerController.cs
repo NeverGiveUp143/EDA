@@ -1,5 +1,6 @@
 ﻿using EDACustomer.Business.Interface;
 using EDACustomer.Models;
+using EDACustomer.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EDACustomer.Controllers
@@ -10,16 +11,26 @@ namespace EDACustomer.Controllers
     {
         private readonly ICustomerBusiness _customerBusiness;
         private readonly IProductBusiness _productBusiness;
-        public CustomerController(ICustomerBusiness customerBusiness, IProductBusiness productBusiness)
+        private readonly ICustomerService _customerService;
+
+        public CustomerController(ICustomerBusiness customerBusiness, IProductBusiness productBusiness,
+            ICustomerService customerService )
         {
             _customerBusiness = customerBusiness;
             _productBusiness = productBusiness;
+            _customerService = customerService;
         }
 
         [HttpPost("AddCustomer")]
         public async Task<string> AddCustomer(CustomerModel customer)
         {
-            return await _customerBusiness.AddCustomer(customer);
+            string result = await _customerBusiness.AddCustomer(customer);
+
+            if (string.IsNullOrEmpty(result)) {
+               await _customerService.UpdateStockAndNotify(customer.ProductId, customer.ItemInCart);
+            }
+
+            return result;
         }
 
 

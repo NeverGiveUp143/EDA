@@ -17,5 +17,15 @@ namespace EDACustomer.Repository
         {
             return await _dBContext.Products.ToListAsync();
         }
+
+        public async Task<Product?> GetProductById(Guid productId)
+        {
+            if(productId == Guid.Empty)
+            {
+                return null;
+            }
+
+            return await _dBContext.Products.FirstOrDefaultAsync(x => x.ProductId == productId);
+        }
     }
 }

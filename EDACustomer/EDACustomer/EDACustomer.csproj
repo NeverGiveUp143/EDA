@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\EDADBContext\EDADBContext\EDADBContext.csproj" />
     <ProjectReference Include="..\..\Helper\Helper\Helper.csproj" />
+    <ProjectReference Include="..\..\SignalR\SignalR\SignalR.csproj" />
   </ItemGroup>
 
 </Project>
