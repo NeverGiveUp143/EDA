@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 
 const useFetch = <T>(url: string) => {
-    debugger;
-    const [data, setData] = useState<T | null>(null);
+   const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -14,7 +13,6 @@ const useFetch = <T>(url: string) => {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Failed to fetch data");
                 const result: T = await response.json();
-                console.log(result);
                 if (typeof result === "string") {
                     setData(null);
                 } else {

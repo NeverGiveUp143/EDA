@@ -4,8 +4,18 @@ import './App.css';
 import { Grid, TabBar } from './components';
 import { ScreenLoaderParams, TabProps } from './components/Tab/propTypes';
 import { GridProps } from './components/Grid/propTypes';
+import { FieldConfig } from './components/Form/propTypes';
+import Form from './components/Form/Form';
 
 function App() {
+  const configData: Record<string, FieldConfig> = {
+    "First Name": { type: "TextField", defaultValue: "" },
+    "Middle Name": { type: "TextField", defaultValue: "" },
+    "Last Name": { type: "TextField", defaultValue: "" },
+    "Display Name": { type: "TextField", defaultValue: "" },
+    "Date OF Birth": { type: "Calendar", defaultValue: "" },
+    "Physically Handicapped": { type: "CheckBox", defaultValue: false }
+  };
 
   const data : GridProps = {
     url : 'https://localhost:7249/Customer/GetCustomers'
@@ -15,6 +25,8 @@ function App() {
     switch (screenId) {
       case "customers":
         return <Grid {...data} />;
+      case "checkout":
+        return <Form configData={configData} />;
       default:
         break;
     }
