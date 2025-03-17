@@ -1,4 +1,5 @@
-﻿using EDADBContext.Models;
+﻿using EDACustomer.Models;
+using EDADBContext.Models;
 
 namespace EDACustomer.Repository.Interface
 {
@@ -6,5 +7,6 @@ namespace EDACustomer.Repository.Interface
     {
         Task<List<Product>> GetProductsList();
         Task<Product?> GetProductById(Guid productId);
+        Task<List<ProductDDModel>> GetProductDDList();
     }
 }

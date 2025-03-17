@@ -27,7 +27,8 @@ namespace EDACustomer.Controllers
             string result = await _customerBusiness.AddCustomer(customer);
 
             if (string.IsNullOrEmpty(result)) {
-               await _customerService.UpdateStockAndNotify(customer.ProductId, customer.ItemInCart);
+               Guid.TryParse(customer.Product, out Guid productId);
+               await _customerService.UpdateStockAndNotify(productId, customer.ItemInCart);
             }
 
             return result;
@@ -46,5 +47,10 @@ namespace EDACustomer.Controllers
             return await _productBusiness.GetProductsList();
         }
 
+        [HttpGet("GetProductDDList")]
+        public async Task<ActionResult<List<ProductDDModel>>> GetProductDDList()
+        {
+            return await _productBusiness.GetProductDDList();
+        }
     }
 }

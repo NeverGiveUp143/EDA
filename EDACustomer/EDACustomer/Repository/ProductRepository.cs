@@ -1,7 +1,9 @@
-﻿using EDACustomer.Repository.Interface;
+﻿using EDACustomer.Models;
+using EDACustomer.Repository.Interface;
 using EDADBContext;
 using EDADBContext.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 namespace EDACustomer.Repository
 {
@@ -26,6 +28,15 @@ namespace EDACustomer.Repository
             }
 
             return await _dBContext.Products.FirstOrDefaultAsync(x => x.ProductId == productId);
+        }
+
+        public async Task<List<ProductDDModel>> GetProductDDList()
+        {
+            return await _dBContext.Products.Select(x => new ProductDDModel
+            {
+                label = x.Name,
+                value = x.ProductId.ToString()
+            }).ToListAsync();
         }
     }
 }

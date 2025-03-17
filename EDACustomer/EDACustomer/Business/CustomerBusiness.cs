@@ -20,7 +20,7 @@ namespace EDACustomer.Business
         {
             try
             {
-                List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerModelMapping);
+                List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerViewModelMapping);
                 List<Customer> DbValue = await _customerRepository.GetCustomersList();
                 List<CustomerModel> customers = Helper.ModelMapper.SourceModelToTargetModel<Customer, CustomerModel>(DbValue, customerModelMappingsValue);
 
@@ -34,7 +34,7 @@ namespace EDACustomer.Business
 
         public async Task<string> AddCustomer(CustomerModel customer)
         {
-            List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerModelMapping);
+            List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerAddModelMapping);
             Customer customerDataObj = Helper.ModelMapper.SourceModelToTargetModel<CustomerModel, Customer>(customer, customerModelMappingsValue);
 
             return await _customerRepository.AddCustomer(customerDataObj);

@@ -5,7 +5,7 @@ namespace EDACustomer.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Guid ProductId { get; set; }
+        public string Product { get; set; }
         public int ItemInCart { get; set; }
     }
 }

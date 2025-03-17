@@ -14,6 +14,12 @@
 
             try
             {
+                if (value is string str && targetType == typeof(Guid))
+                    return Guid.TryParse(str, out var guidValue) ? guidValue : Guid.Empty;
+
+                if (value is Guid guid && targetType == typeof(string))
+                    return guid.ToString();
+
                 return Convert.ChangeType(value, targetType);
             }
             catch

@@ -48,5 +48,19 @@ namespace EDACustomer.Business
                 return new ();
             }
         }
+
+        public async Task<List<ProductDDModel>> GetProductDDList()
+        {
+            try
+            {
+                return await _productRepository.GetProductDDList();  
+            }
+            catch (Exception ex)
+            {
+                return new();
+            }
+        }
+
+
     }
 }
