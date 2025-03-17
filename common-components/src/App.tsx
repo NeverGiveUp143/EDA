@@ -2,7 +2,7 @@ import React from 'react';
 
 import './App.css';
 import { Grid, TabBar } from './components';
-import { ScreenLoaderParams, TabProps } from './components/Tab/propTypes';
+import { ScreenLoaderParams, TabProps } from './components/TabBar/propTypes';
 import { GridProps } from './components/Grid/propTypes';
 import { FieldConfig } from './components/Form/propTypes';
 import Form from './components/Form/Form';
@@ -33,9 +33,9 @@ function App() {
 
   const screenLoader = ({ screenId } : ScreenLoaderParams) => {
     switch (screenId) {
-      case "customers":
+      case "customersList":
         return <Grid {...data} />;
-      case "checkout":
+      case "customercheckout":
         return <Form  postUrl="https://localhost:7249/Customer/AddCustomer" configData={configData}  formValidationSchema={formValidationSchema}/>;
       default:
         break;
@@ -44,10 +44,10 @@ function App() {
 
   const tabs : TabProps = {
      tabs : [
-       {id : 'customers', label : 'Customers Checkout History', disabled : false} ,
-       {id : 'checkout', label : 'Customer Checkout', disabled : false} 
+       {id : 'customersList', label : 'Customers Checkout History', disabled : false} ,
+       {id : 'customercheckout', label : 'Customer Checkout', disabled : false} 
       ],
-     defaultTab : 'customers',
+     defaultTab : 'customersList',
     screenLoader : screenLoader
   }
 
