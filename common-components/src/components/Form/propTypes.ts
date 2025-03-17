@@ -1,19 +1,22 @@
+import * as yup from "yup";
 
 export interface FieldConfig  {
     type: string;
-    defaultValue: string | boolean;
+    defaultValue: any;
     url?: string;
   };
 
 export interface FormProps {
-    url?: string;
+    postUrl: string;
     configData : Record<string, FieldConfig>;
+    formValidationSchema :  yup.InferType<any>;
   }
 
 export interface ComponentProps {
     type: string;
     field: string;
-    value: any;
+    watch: any;
     url?: string;
-    onChange: (field: string, value: any) => void
+    register : any,
+    errors : any
   }

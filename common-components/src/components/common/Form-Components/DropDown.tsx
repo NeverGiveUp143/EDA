@@ -5,18 +5,20 @@ import { DropDownProps } from './propTypes';
 
 
 
-const DropDown: React.FC<DropDownProps> = ({ label, value, url, onChange }) => {
-  const [options , setOptions] = useState<string[]>([]);
-  const {data , loading , error} = useFetch<string[]>(url);
+const DropDown: React.FC<DropDownProps> = ({ label, value, url, register, errors }) => { 
+  const {data , loading , error} = useFetch<Record<string,any>[]>(url);
+  const [options , setOptions] = useState<Record<string,any>[]>([]);
 
   useEffect(() => {
     var fetchOptions = async () => {
        if (data !== null && data !== undefined) {
           setOptions(data);
+
+          console.log(data);
         }
     }
     fetchOptions();
-  })
+  },[data])
 
   return (
     <div className="dropdown-container">
@@ -34,15 +36,29 @@ const DropDown: React.FC<DropDownProps> = ({ label, value, url, onChange }) => {
       {!loading && data != null && data.length > 0 && (
         <select
           value={value}
-          onChange={(e) => onChange(label, e.target.value)}
+          {...register(label)}
           className="dropdown"
         >
+          <option value="" >
+            Select {label}
+          </option>
           {options.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
+            <option key={index} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>
+      )}
+      {errors[label] && (
+        <Typography
+          color="error"
+          style={{
+            position: "absolute",
+            fontSize: "small",
+          }}
+        >
+          {errors[label].message}
+        </Typography>
       )}
     </div>
   );

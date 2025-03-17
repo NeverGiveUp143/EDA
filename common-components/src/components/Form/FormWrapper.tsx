@@ -6,7 +6,7 @@ const FormWrapper = ({ children }: { children: React.ReactNode }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: 2, 
+        gap: 3, 
         width: "400px",
         margin: "auto",
         padding: 2,

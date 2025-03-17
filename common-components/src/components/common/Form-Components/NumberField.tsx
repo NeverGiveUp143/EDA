@@ -1,18 +1,26 @@
 import React from 'react';
-import { TextFieldProps } from './propTypes';
+import { NumberFieldProps } from './propTypes';
 import { Typography } from '@mui/material';
 
 
 
-const TextField: React.FC<TextFieldProps> = ({ label, value, register, errors}) => {
+const NumberField: React.FC<NumberFieldProps> = ({ label, value, register, errors}) => {
   return (
     <div className="input-container">
       <input
-        type="text"
+        type="number"
         value={value}
         {...register(label)}
         style={{ height: "25px" }}
         className="text-field"
+        onPaste={(e) => {
+            e.preventDefault();
+          }}
+        onKeyDown={(e) => {
+            if (/[+\-.]/.test(e.key)) {
+              e.preventDefault(); 
+            }
+          }}
       />
       {errors[label] && (
         <Typography
@@ -29,4 +37,4 @@ const TextField: React.FC<TextFieldProps> = ({ label, value, register, errors}) 
   );
 };
 
-export default TextField;
+export default NumberField;

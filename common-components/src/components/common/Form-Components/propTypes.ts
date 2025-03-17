@@ -1,24 +1,35 @@
 export interface CalendarProps {
   label: string;
   value: string;
-  onChange: (field: string, value: any) => void;
+  register : any,
+  errors : any
 }
 
 export interface CheckBoxProps {
   label: string;
   checked: boolean;
-  onChange: (field: string, value: any) => void;
+  register : any,
+  errors : any
 }
 
 export interface DropDownProps {
     label: string;
     value: string;
     url: string;
-    onChange: (field: string, value: any) => void;
+    register : any,
+    errors : any
   }
 
 export interface TextFieldProps {
   label: string;
   value: string;
-  onChange: (field: string, value: any) => void;
+  register : any,
+  errors : any
+}
+
+export interface NumberFieldProps {
+  label: string;
+  value: string;
+  register : any,
+  errors : any
 }

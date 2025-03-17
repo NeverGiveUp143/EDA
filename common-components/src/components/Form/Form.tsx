@@ -1,120 +1,106 @@
-import { useEffect, useState } from "react";
-import useFetch from "../../utils/useFetch";
-import { FormProps } from "./propTypes";
-import { Box, Button, Grid2, Typography } from "@mui/material";
-import { Calendar, CheckBox, DropDown, TextField } from '../common';
-import { ComponentProps } from './propTypes';
+import { useEffect, useMemo, useState } from "react";
+import { Box, Button, SnackbarCloseReason, Typography } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Calendar, CheckBox, DropDown, TextField, NumberField } from "../common";
 import FormWrapper from "./FormWrapper";
+import { FormProps, ComponentProps } from "./propTypes";
+import PostApi from "../../utils/ApiHandler";
+import Toast from "../common/Toast";
+import { Severity, ToastProps } from "../common/Toast/propTypes";
+import { FORMERRORMESSAGE, FORMSUCCESSMESSAGE } from "../../utils/Constants";
 
-const RenderFormFields = ({ type, field, value, url, onChange }: ComponentProps)  => {
+const RenderFormFields = ({ type, field, watch, url, register, errors }: ComponentProps) => {
+  const value = watch(field);
+
   switch (type) {
     case "TextField":
-      return <TextField label={field} value={value as string} onChange={onChange} />;
+      return <TextField register={register} label={field} value={value} errors={errors} />;
     case "DropDown":
-      return <DropDown label={field} value={value as string} url = {url || ''} onChange={onChange} />;
+      return <DropDown register={register} label={field} value={value} url={url ?? ""} errors={errors} />;
     case "Calendar":
-      return <Calendar label={field} value={value as string} onChange={onChange} />;
+      return <Calendar register={register} label={field} value={value} errors={errors} />;
     case "CheckBox":
-      return <CheckBox label={field} checked={value as boolean} onChange={onChange} />;
+      return <CheckBox register={register} label={field} checked={!!value} errors={errors} />;
+    case "NumberField":
+      return <NumberField register={register} label={field} value={value} errors={errors} />;
     default:
       return null;
   }
-
 };
 
+const Form = ({ postUrl, configData, formValidationSchema }: FormProps) => {
+  const formData = useMemo(() => {
+    return Object.fromEntries(
+      Object.keys(configData).map((field) => [field, configData[field]?.defaultValue ?? ""])
+    );
+  }, [configData]);
 
-const Form = ({ url, configData }: FormProps) => {
-  const [formData, setFormData] = useState<Record<string, any>>({});
-  const { data, loading, error } = useFetch<Record<string, any>[]>(url?.trim() || "");
+  const [isOpen, setIsOpen] = useState(false);
+  const [toastProps , setToastProps] = useState<ToastProps>();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isDirty, isValid },
+  } = useForm({
+    resolver: yupResolver(formValidationSchema),
+    mode: "onChange",
+    defaultValues: formData,
+  });
 
   useEffect(() => {
-    const initialFormData: Record<string, any> = {};
-    
-    Object.keys(configData).forEach((field) => {
-      initialFormData[field] = configData[field]?.defaultValue || "";
-    });
-  
-    setFormData(() => ({
-      ...initialFormData, 
-      ...data, 
-    }));
-  }, [data, configData]);
+    Object.keys(formData).forEach((field) => setValue(field, formData[field]));
+  }, [formData, setValue]);
 
+  const handleToastClose = (
+    _event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setIsOpen(false);
   };
 
-  if (!loading && !data && url?.trim()) {
-    return <Typography variant="h6">Connecting...</Typography>;
-  }
+  const onSubmit = async (formValues: any) => {
+    const result = await PostApi(postUrl, formValues);
 
-  if (loading && (!data || data.length === 0) && url?.trim()) {
-    return <Typography variant="h6">No Data Received</Typography>;
+  if (result.success) {
+    setToastProps({ message: FORMSUCCESSMESSAGE, severity: Severity.Success , isOpen: true , onClose : handleToastClose});
+    setIsOpen(true);
+  } else {
+    setToastProps({ message: result.error || FORMERRORMESSAGE , severity: Severity.Error , isOpen: false , onClose : handleToastClose});
+    setIsOpen(true);
   }
+  };
 
-  if (error) {
-    return (
-      <Typography variant="h6" color="error">
-        Error: {error}
-      </Typography>
-    );
-  }
+  if (!Object.keys(formData).length) return <Typography variant="h6">No Data Received</Typography>;
 
   return (
-    <Box sx={{ width: "100%" , marginTop : '15px', padding : '15px'}}>
-      <form>
+    <>
+    <Box sx={{ width: "100%", mt: 2, p: 2 }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FormWrapper>
-          {Object.keys(configData).map((field) => {
-            const { type = "",defaultValue = "" , url = "" } = configData[field] || {};
-            const value = formData[field] || defaultValue;
-            return (
-              <Grid2 container key={field} alignItems="center" spacing={2}>
-                <Grid2
-                  size={6}
-                  style={{ textAlign: "right", paddingRight: "10px" }}
-                >
-                  <Typography
-                    variant="body1"
-                    style={{ textAlign: "left", width: "100%" }}
-                  >
-                    {field}
-                  </Typography>
-                </Grid2>
-                <Grid2
-                  size={6}
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  {RenderFormFields({
-                    type,
-                    field,
-                    value,
-                    onChange: handleChange,
-                    url,
-                  })}
-                </Grid2>
-              </Grid2>
-            );
-          })}
-          <br />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            style={{ marginTop: "10px" }}
-            onClick={(e: React.FormEvent) => {
-              e.preventDefault();
-              console.log(formData);
-            }}
-          >
-            Submit
+          {Object.keys(configData).map((field) => (
+            <div key={field} style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
+              <Typography variant="body1" sx={{ width: "30%", fontSize: "1.2rem" }}>
+                {field}
+              </Typography>
+              <RenderFormFields type={configData[field]?.type} field={field} url={configData[field]?.url} register={register} watch={watch} errors={errors} />
+            </div>
+          ))}
+          <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }} disabled={!isDirty || !isValid}>
+            Save
           </Button>
         </FormWrapper>
       </form>
     </Box>
+      {isOpen && toastProps && toastProps.message && <Toast {...toastProps} />}
+    </>
   );
 };
 

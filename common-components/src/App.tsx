@@ -6,17 +6,27 @@ import { ScreenLoaderParams, TabProps } from './components/Tab/propTypes';
 import { GridProps } from './components/Grid/propTypes';
 import { FieldConfig } from './components/Form/propTypes';
 import Form from './components/Form/Form';
+import * as yup from "yup";
 
 function App() {
   const configData: Record<string, FieldConfig> = {
-    "First Name": { type: "TextField", defaultValue: "" },
-    "Middle Name": { type: "TextField", defaultValue: "" },
-    "Last Name": { type: "TextField", defaultValue: "" },
-    "Display Name": { type: "TextField", defaultValue: "" },
-    "Date OF Birth": { type: "Calendar", defaultValue: "" },
-    "Physically Handicapped": { type: "CheckBox", defaultValue: false }
+    "Name": { type: "TextField", defaultValue: "" },
+    "Product": { type: "DropDown", defaultValue: "" , url : 'https://localhost:7249/Customer/GetProductDDList'},
+    "ItemInCart": { type: "NumberField", defaultValue: 0 }
   };
-
+  
+  const formValidationSchema = yup.object().shape({
+    Name: yup.string()?.trim().required("Name is required"),
+    Product: yup.string()?.trim().required("Products is required"),
+    ItemInCart: yup
+      .number()
+      .typeError("Item In Cart must be a number")
+      .required("Item In Cart is required")
+      .integer("Item In Cart must be an integer")
+      .min(1, "Must be at least 1")
+      .max(999, 'Maximum 3 characters allowed'),
+  });
+  
   const data : GridProps = {
     url : 'https://localhost:7249/Customer/GetCustomers'
   } 
@@ -26,7 +36,7 @@ function App() {
       case "customers":
         return <Grid {...data} />;
       case "checkout":
-        return <Form configData={configData} />;
+        return <Form  postUrl="https://localhost:7249/Customer/AddCustomer" configData={configData}  formValidationSchema={formValidationSchema}/>;
       default:
         break;
     }
