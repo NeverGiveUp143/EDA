@@ -5,7 +5,7 @@ import { DropDownProps } from './propTypes';
 
 
 
-const DropDown: React.FC<DropDownProps> = ({ label, value, url, register, errors }) => { 
+const DropDown: React.FC<DropDownProps> = ({ label, value, url, register, errors , style }) => { 
   const {data , loading , error} = useFetch<Record<string,any>[]>(url);
   const [options , setOptions] = useState<Record<string,any>[]>([]);
 
@@ -22,10 +22,10 @@ const DropDown: React.FC<DropDownProps> = ({ label, value, url, register, errors
 
   return (
     <div className="dropdown-container">
-      {!loading && data == null && (
+      {!loading && data == null && error === null && (
         <Typography variant="h6">Connecting...</Typography>
       )}
-      {loading && data != null && data?.length === 0 && (
+      {loading && data !== null && data?.length === 0 && (
         <Typography variant="h6"> No Data Received</Typography>
       )}
       {error && (
@@ -33,11 +33,12 @@ const DropDown: React.FC<DropDownProps> = ({ label, value, url, register, errors
           Error: {error}
         </Typography>
       )}
-      {!loading && data != null && data.length > 0 && (
+      {!loading && data !== null && data.length > 0 && (
         <select
           value={value}
           {...register(label)}
           className="dropdown"
+          style={style ?? {}}
         >
           <option value="" >
             Select {label}

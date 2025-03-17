@@ -4,20 +4,20 @@ import { Typography } from '@mui/material';
 
 
 
-const NumberField: React.FC<NumberFieldProps> = ({ label, value, register, errors}) => {
+const NumberField: React.FC<NumberFieldProps> = ({ label, value, register, errors,style}) => {
   return (
     <div className="input-container">
       <input
         type="number"
         value={value}
         {...register(label)}
-        style={{ height: "25px" }}
+        style={style ?? {}}
         className="text-field"
         onPaste={(e) => {
             e.preventDefault();
           }}
         onKeyDown={(e) => {
-            if (/[+\-.]/.test(e.key)) {
+            if (/[+\-.]/.test(e.key) || e.key === "e" || e.key === "E") {
               e.preventDefault(); 
             }
           }}

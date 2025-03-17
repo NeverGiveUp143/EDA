@@ -4,14 +4,14 @@ import { Typography } from '@mui/material';
 
 
 
-const Calendar: React.FC<CalendarProps> = ({ label, value, register, errors }) => {
+const Calendar: React.FC<CalendarProps> = ({ label, value, register, errors, style }) => {
   return (
     <div className="calendar-container">
       <input
         type="date"
         value={value}
         {...register(label)}
-        style={{ height: "25px" }}
+        style={style ?? {}}
         className="calendar"
       />
       {errors[label] && (

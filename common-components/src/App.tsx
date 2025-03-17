@@ -10,9 +10,9 @@ import * as yup from "yup";
 
 function App() {
   const configData: Record<string, FieldConfig> = {
-    "Name": { type: "TextField", defaultValue: "" },
-    "Product": { type: "DropDown", defaultValue: "" , url : 'https://localhost:7249/Customer/GetProductDDList'},
-    "ItemInCart": { type: "NumberField", defaultValue: 0 }
+    "Name": { type: "TextField", defaultValue: "" , style : { height: "25px" }},
+    "Product": { type: "DropDown", defaultValue: "" , url : 'https://localhost:7249/Customer/GetProductDDList', style : { height: "34px" , width: "175px" }},
+    "ItemInCart": { type: "NumberField", defaultValue: 0,  style : { height: "25px" }},
   };
   
   const formValidationSchema = yup.object().shape({

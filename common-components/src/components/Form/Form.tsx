@@ -10,20 +10,20 @@ import Toast from "../common/Toast";
 import { Severity, ToastProps } from "../common/Toast/propTypes";
 import { FORMERRORMESSAGE, FORMSUCCESSMESSAGE } from "../../utils/Constants";
 
-const RenderFormFields = ({ type, field, watch, url, register, errors }: ComponentProps) => {
+const RenderFormFields = ({ type, field, watch, url, register, errors , style }: ComponentProps) => {
   const value = watch(field);
 
   switch (type) {
     case "TextField":
-      return <TextField register={register} label={field} value={value} errors={errors} />;
+      return <TextField register={register} label={field} value={value} errors={errors} style = {style}/>;
     case "DropDown":
-      return <DropDown register={register} label={field} value={value} url={url ?? ""} errors={errors} />;
+      return <DropDown register={register} label={field} value={value} url={url ?? ""} errors={errors} style = {style}/>;
     case "Calendar":
-      return <Calendar register={register} label={field} value={value} errors={errors} />;
+      return <Calendar register={register} label={field} value={value} errors={errors} style = {style}/>;
     case "CheckBox":
-      return <CheckBox register={register} label={field} checked={!!value} errors={errors} />;
+      return <CheckBox register={register} label={field} checked={!!value} errors={errors} style = {style}/>;
     case "NumberField":
-      return <NumberField register={register} label={field} value={value} errors={errors} />;
+      return <NumberField register={register} label={field} value={value} errors={errors} style = {style}/>;
     default:
       return null;
   }
@@ -73,7 +73,7 @@ const Form = ({ postUrl, configData, formValidationSchema }: FormProps) => {
     setToastProps({ message: FORMSUCCESSMESSAGE, severity: Severity.Success , isOpen: true , onClose : handleToastClose});
     setIsOpen(true);
   } else {
-    setToastProps({ message: result.error || FORMERRORMESSAGE , severity: Severity.Error , isOpen: false , onClose : handleToastClose});
+    setToastProps({ message: result?.error ?? FORMERRORMESSAGE , severity: Severity.Error , isOpen: false , onClose : handleToastClose});
     setIsOpen(true);
   }
   };
@@ -87,10 +87,10 @@ const Form = ({ postUrl, configData, formValidationSchema }: FormProps) => {
         <FormWrapper>
           {Object.keys(configData).map((field) => (
             <div key={field} style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
-              <Typography variant="body1" sx={{ width: "30%", fontSize: "1.2rem" }}>
+              <Typography variant="body1" sx={{ width: "30%", fontSize: "1.2rem",textAlign: "left"}}>
                 {field}
               </Typography>
-              <RenderFormFields type={configData[field]?.type} field={field} url={configData[field]?.url} register={register} watch={watch} errors={errors} />
+              <RenderFormFields type={configData[field]?.type} field={field} url={configData[field]?.url} register={register} watch={watch} errors={errors} style={configData[field]?.style}/>
             </div>
           ))}
           <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }} disabled={!isDirty || !isValid}>

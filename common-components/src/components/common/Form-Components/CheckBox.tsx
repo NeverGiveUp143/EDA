@@ -4,14 +4,14 @@ import { Typography } from '@mui/material';
 
 
 
-const CheckBox: React.FC<CheckBoxProps> = ({ label, checked, register, errors }) => {
+const CheckBox: React.FC<CheckBoxProps> = ({ label, checked, register, errors, style }) => {
   return (
     <div className="checkbox-container">
       <input
         type="checkbox"
         checked={checked}
         {...register(label)}
-        style={{ height: "25px" }}
+        style={style ?? {}}
       />
       {errors[label] && (
         <Typography

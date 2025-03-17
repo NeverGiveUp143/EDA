@@ -25,7 +25,7 @@ const Grid = (props: GridProps) => {
 
     return (
         <Box sx={{ height: 400, width: "100%" }}>
-            {!loading && data === null && <Typography variant="h6">Connecting...</Typography>}
+            {!loading && data === null && error == null && <Typography variant="h6">Connecting...</Typography>}
             {loading && data != null && data.length === 0 && <Typography variant="h6"> No Data Received</Typography>}
             {error && <Typography variant="h6" color="error">Error: {error}</Typography>}
             {!loading && data != null && data?.length > 0 && (

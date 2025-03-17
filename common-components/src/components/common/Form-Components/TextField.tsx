@@ -4,14 +4,14 @@ import { Typography } from '@mui/material';
 
 
 
-const TextField: React.FC<TextFieldProps> = ({ label, value, register, errors}) => {
+const TextField: React.FC<TextFieldProps> = ({ label, value, register, errors, style}) => {
   return (
     <div className="input-container">
       <input
         type="text"
         value={value}
         {...register(label)}
-        style={{ height: "25px" }}
+        style={style ?? {}}
         className="text-field"
       />
       {errors[label] && (
