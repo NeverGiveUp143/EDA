@@ -17,7 +17,7 @@ namespace EDACustomer.Repository
         public T? GetConfigValue<T>(string Key)
         {
             dynamic? configData = TypeConversionHelper.GetDefaultValue(typeof(T));
-            try
+            try 
             {
                 var config = _dbContext.Config.FirstOrDefault(x => x.Key == Key);
 

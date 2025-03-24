@@ -14,7 +14,7 @@ namespace EDACustomer.Controllers
         private readonly ICustomerService _customerService;
 
         public CustomerController(ICustomerBusiness customerBusiness, IProductBusiness productBusiness,
-            ICustomerService customerService )
+            ICustomerService customerService)
         {
             _customerBusiness = customerBusiness;
             _productBusiness = productBusiness;
@@ -26,9 +26,10 @@ namespace EDACustomer.Controllers
         {
             string result = await _customerBusiness.AddCustomer(customer);
 
-            if (string.IsNullOrEmpty(result)) {
-               Guid.TryParse(customer.Product, out Guid productId);
-               await _customerService.UpdateStockAndNotify(productId, customer.ItemInCart);
+            if (string.IsNullOrEmpty(result))
+            {
+                Guid.TryParse(customer.Product, out Guid productId);
+                await _customerService.UpdateStockAndNotify(productId, customer.ItemInCart);
             }
 
             return result;
