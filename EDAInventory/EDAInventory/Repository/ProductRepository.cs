@@ -1,6 +1,5 @@
 ﻿using EDADBContext;
 using EDADBContext.Models;
-using EDAInventory.Models;
 using EDAInventory.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +18,7 @@ namespace EDAInventory.Repository
             return await _dBContext.Products.ToListAsync();
         }
 
-        public async Task<string> UpsertProduct(Product product, bool IsUpdate = false)
+        public async Task<string> UpsertProduct(Product? product, bool IsUpdate = false)
         {
             string tableName = Helper.Utlity.GetClassName<Product>(product);
             try

@@ -1,5 +1,6 @@
 ﻿#nullable disable
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EDADBContext.Models
 {
@@ -9,6 +10,8 @@ namespace EDADBContext.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int Quantity { get; set; }
+    
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid ProductId { get; set; }
     }
 }

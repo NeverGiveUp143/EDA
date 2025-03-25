@@ -21,20 +21,28 @@ namespace EDACustomer.Services
         {
             int quantity = 0;
             ProductModel product = await _productBusiness.GetProductById(productId);
-            if (product != null) { 
+            if (product != null)
+            {
                 quantity = product.Quantity;
             }
             return quantity;
+        }
+
+        public async Task<ProductModel> UpdatedProduct(Guid productId, int checkedOutQuantity)
+        {
+            ProductModel product = await _productBusiness.GetProductById(productId);
+            product.Quantity -= checkedOutQuantity;
+            return product ?? new ();
         }
 
 
         public async Task UpdateStockAndNotify(Guid productId, int checkedOutQuantity)
         {
             int newQuantity = await GetLatestQuantityUpdate(productId);
-            newQuantity = - checkedOutQuantity;
+            newQuantity -= checkedOutQuantity;
 
-             await _hubContext.Clients.Group("InventoryUpdate")
-                .SendAsync("ReceiveUpdate", "InventoryUpdate", new { ProductId = productId, Stock = newQuantity });
+            await _hubContext.Clients.Group("InventoryUpdate")
+               .SendAsync("ReceiveUpdate", "InventoryUpdate", new { ProductId = productId, Stock = newQuantity });
         }
     }
 }

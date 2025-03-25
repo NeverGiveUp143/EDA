@@ -2,6 +2,8 @@
 using EDACustomer.Models;
 using EDACustomer.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using RabbitMQPublisher.Interface;
 
 namespace EDACustomer.Controllers
 {
@@ -12,13 +14,15 @@ namespace EDACustomer.Controllers
         private readonly ICustomerBusiness _customerBusiness;
         private readonly IProductBusiness _productBusiness;
         private readonly ICustomerService _customerService;
+        private readonly IRabbitMqPublisher _rabbitMqPublisher;
 
         public CustomerController(ICustomerBusiness customerBusiness, IProductBusiness productBusiness,
-            ICustomerService customerService)
+            ICustomerService customerService, IRabbitMqPublisher rabbitMqPublisher)
         {
             _customerBusiness = customerBusiness;
             _productBusiness = productBusiness;
             _customerService = customerService;
+            _rabbitMqPublisher = rabbitMqPublisher;
         }
 
         [HttpPost("AddCustomer")]
@@ -29,7 +33,8 @@ namespace EDACustomer.Controllers
             if (string.IsNullOrEmpty(result))
             {
                 Guid.TryParse(customer.Product, out Guid productId);
-                await _customerService.UpdateStockAndNotify(productId, customer.ItemInCart);
+                var message = JsonConvert.SerializeObject(await _customerService.UpdatedProduct(productId, customer.ItemInCart)); 
+                _rabbitMqPublisher.PublishMessage(message, "order_placed_queue");
             }
 
             return result;

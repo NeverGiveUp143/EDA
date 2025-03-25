@@ -78,7 +78,9 @@ namespace EDADBContext.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");

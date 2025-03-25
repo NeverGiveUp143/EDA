@@ -6,6 +6,6 @@ namespace EDAInventory.Business.Interface
     public interface IProductBusiness
     {
         Task<List<ProductModel>> GetProductsList();
-        Task<string> UpsertProduct(ProductModel product, bool IsUpdate = false);
+        Task<string> UpsertProduct(ProductModel? product, bool IsUpdate = false);
     }
 }

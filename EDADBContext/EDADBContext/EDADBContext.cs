@@ -16,7 +16,9 @@ namespace EDADBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.Entity<Product>()
+            .Property(p => p.ProductId)
+            .HasDefaultValueSql("NEWID()");
         }
     }
 

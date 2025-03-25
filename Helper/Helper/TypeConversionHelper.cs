@@ -4,7 +4,7 @@
     {
         public static object? ConvertToType(object? value, string? typeString)
         {
-            if (value == null || string.IsNullOrWhiteSpace(typeString))
+            if (string.IsNullOrWhiteSpace(typeString))
                 return null;
 
             Type? targetType = Type.GetType(typeString);
@@ -16,6 +16,9 @@
             {
                 if (value is string str && targetType == typeof(Guid))
                     return Guid.TryParse(str, out var guidValue) ? guidValue : Guid.Empty;
+
+                if (value is null && targetType == typeof(Guid))
+                    return Guid.Empty;
 
                 if (value is Guid guid && targetType == typeof(string))
                     return guid.ToString();
