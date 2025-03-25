@@ -31,7 +31,7 @@ namespace EDAInventory.Business
             }
         }
 
-        public async Task<string> UpsertProduct(ProductModel product, bool IsUpdate = false)
+        public async Task<string> UpsertProduct(ProductModel? product, bool IsUpdate = false)
         {
             string result = string.Empty;
             try

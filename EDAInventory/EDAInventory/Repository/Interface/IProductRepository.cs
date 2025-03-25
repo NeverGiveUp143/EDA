@@ -6,6 +6,6 @@ namespace EDAInventory.Repository.Interface
     public interface IProductRepository
     {
         Task<List<Product>> GetProductsList();
-        Task<string> UpsertProduct(Product product, bool IsUpdate = false);
+        Task<string> UpsertProduct(Product? product, bool IsUpdate = false);
     }
 }

@@ -7,6 +7,8 @@ using EDACustomer.Repository;
 using EDACustomer.Business;
 using EDACustomer.Services.Interface;
 using EDACustomer.Services;
+using RabbitMQPublisher.Interface;
+using RabbitMQPublisher;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,14 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()  // Allows GET, POST, PUT, DELETE, etc.
             .AllowAnyHeader()); // Allows all headers
 });
+
+// Register the publisher with configuration
+builder.Services.AddSingleton<IRabbitMqPublisher>(sp =>
+    new RabbitMqPublisher(
+        hostName: builder.Configuration["RabbitMQ:HostName"] ?? "localhost",
+        username: builder.Configuration["RabbitMQ:Username"] ?? "guest",
+        password: builder.Configuration["RabbitMQ:Password"] ?? "guest"
+    ));
 
 // Add services to the container.
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

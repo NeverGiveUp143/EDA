@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDADBContext", "..\EDADBCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helper", "..\Helper\Helper\Helper.csproj", "{EEA5D150-C3B8-4169-A4E9-7879F4AC45F0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMqConsumer", "..\RabbitMQ\RabbitMqConsumer\RabbitMqConsumer\RabbitMqConsumer.csproj", "{D7752DB4-E049-45DF-BCFA-620AAC93D0A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{EEA5D150-C3B8-4169-A4E9-7879F4AC45F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEA5D150-C3B8-4169-A4E9-7879F4AC45F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEA5D150-C3B8-4169-A4E9-7879F4AC45F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7752DB4-E049-45DF-BCFA-620AAC93D0A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7752DB4-E049-45DF-BCFA-620AAC93D0A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7752DB4-E049-45DF-BCFA-620AAC93D0A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7752DB4-E049-45DF-BCFA-620AAC93D0A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

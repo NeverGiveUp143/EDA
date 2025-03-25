@@ -28,7 +28,7 @@ namespace EDAInventory.Controllers
 
 
         [HttpPost("AddProduct")]
-        public async Task<ActionResult<string>> AddProduct(ProductModel product)
+        public async Task<string> AddProduct(ProductModel product)
         {
             return await _productBusiness.UpsertProduct(product);
         }

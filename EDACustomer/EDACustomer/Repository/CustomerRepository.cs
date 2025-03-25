@@ -15,7 +15,7 @@ namespace EDACustomer.Repository
 
         public async Task<List<Customer>> GetCustomersList()
         {
-           return await _dBContext.Customer.ToListAsync(); 
+            return await _dBContext.Customer.ToListAsync();
         }
 
         public async Task<string> AddCustomer(Customer customer)
@@ -24,10 +24,10 @@ namespace EDACustomer.Repository
             try
             {
                 if (customer != null)
-                {                   
+                {
                     _dBContext.Customer.Add(customer);
-                    var result =  await _dBContext.SaveChangesAsync();
-                    return result > 0  ? string.Empty : String.Format(Constants.DBInsertFailureMessage, tableName);
+                    var result = await _dBContext.SaveChangesAsync();
+                    return result > 0 ? string.Empty : String.Format(Constants.DBInsertFailureMessage, tableName);
                 }
                 return String.Format(Constants.DataNullErrorMessage, tableName);
             }
@@ -35,8 +35,7 @@ namespace EDACustomer.Repository
             {
                 return String.Format(Constants.ExceptionWhileInsertingorUpdatingData + ex.Message, tableName);
             }
-           
-        }
 
+        }
     }
 }
