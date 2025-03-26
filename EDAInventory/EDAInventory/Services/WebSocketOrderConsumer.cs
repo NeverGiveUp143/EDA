@@ -18,12 +18,12 @@ namespace EDAInventory.Services
             _serviceProvider = serviceProvider;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("WebSocketOrderConsumer starting...");
             try
             {
-                _rabbitMqConsumer.StartConsuming("order_placed_queue", message =>
+                await _rabbitMqConsumer.StartConsumingAsync("order_exchange", message =>
                 {
                     Console.WriteLine($"Consumed message: {message}");
                     var eventMessage = JsonConvert.SerializeObject(new { eventType = "OrderPlaced", data = JsonConvert.DeserializeObject(message) });
@@ -33,7 +33,7 @@ namespace EDAInventory.Services
                         {
                             var productBusiness = scope.ServiceProvider.GetRequiredService<IProductBusiness>();
                             var product = JsonConvert.DeserializeObject<ProductModel>(message);
-                            await productBusiness.UpsertProduct(product,true);
+                            await productBusiness.UpsertProduct(product, true);
                         }
 
                         lock (_clients)
@@ -49,7 +49,9 @@ namespace EDAInventory.Services
                                 }
                             }
                         }
-                        }).GetAwaiter().GetResult();
+                    }).GetAwaiter().GetResult();
+
+                    return Task.CompletedTask;
                 });
                 Console.WriteLine("WebSocketOrderConsumer started");
             }
@@ -58,8 +60,7 @@ namespace EDAInventory.Services
                 Console.WriteLine($"Error in WebSocketOrderConsumer: {ex.Message}");
                 throw;
             }
-
-            return Task.CompletedTask;
+           
         }
 
         public async Task HandleWebSocket(HttpContext context)

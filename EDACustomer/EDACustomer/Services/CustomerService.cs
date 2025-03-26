@@ -31,8 +31,11 @@ namespace EDACustomer.Services
         public async Task<ProductModel> UpdatedProduct(Guid productId, int checkedOutQuantity)
         {
             ProductModel product = await _productBusiness.GetProductById(productId);
-            product.Quantity -= checkedOutQuantity;
-            return product ?? new ();
+            if (product != null)
+            {
+                product.Quantity -= checkedOutQuantity;
+            }
+            return product ?? new();
         }
 
 

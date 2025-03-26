@@ -13,8 +13,6 @@ const DropDown: React.FC<DropDownProps> = ({ label, value, url, register, errors
     var fetchOptions = async () => {
        if (data !== null && data !== undefined) {
           setOptions(data);
-
-          console.log(data);
         }
     }
     fetchOptions();

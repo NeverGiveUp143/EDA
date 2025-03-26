@@ -11,6 +11,7 @@ export interface FormProps {
     postUrl: string;
     configData : Record<string, FieldConfig>;
     formValidationSchema :  yup.InferType<any>;
+    RedirectToDefaultTab : () => void
   }
 
 export interface ComponentProps {

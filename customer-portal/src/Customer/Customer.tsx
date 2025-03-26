@@ -31,12 +31,12 @@ const Customer = () => {
     url : 'https://localhost:7249/Customer/GetCustomers'
   } 
 
-  const screenLoader = ({ screenId } : ScreenLoaderParams) => {
+  const screenLoader = ({ screenId , RedirectToDefaultTab } : ScreenLoaderParams) => {
     switch (screenId) {
       case "customersList":
         return <Grid {...data} />;
       case "customercheckout":
-        return <Form  postUrl="https://localhost:7249/Customer/AddCustomer" configData={configData}  formValidationSchema={formValidationSchema}/>;
+        return <Form  postUrl="https://localhost:7249/Customer/AddCustomer" configData={configData}  formValidationSchema={formValidationSchema} RedirectToDefaultTab={RedirectToDefaultTab}/>;
       default:
         break;
     }

@@ -23,7 +23,7 @@ namespace EDAInventory.Controllers
         [HttpPut("UpdateProducts")]
         public async Task<ActionResult<string>> UpdateProduct(ProductModel product)
         {
-            return await _productBusiness.UpsertProduct(product,true);
+            return await _productBusiness.UpsertProduct (product,true);
         }
 
 

@@ -11,7 +11,7 @@ namespace RabbitMqConsumer
         private readonly string _username;
         private readonly string _password;
         private IConnection _connection;
-        private IModel _channel;
+        private IChannel _channel;
 
         public RabbitMQConsumer(string hostName, string username, string password)
         {
@@ -20,7 +20,7 @@ namespace RabbitMqConsumer
             _password = password;
         }
 
-        public void StartConsuming(string queueName, Action<string> messageHandler)
+        public async Task StartConsumingAsync(string queueName, Func<string, Task> messageHandler)
         {
             var factory = new ConnectionFactory
             {
@@ -29,33 +29,63 @@ namespace RabbitMqConsumer
                 Password = _password
             };
 
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
+            // Create connection and channel asynchronously
+            _connection = await factory.CreateConnectionAsync();
+            _channel = await _connection.CreateChannelAsync();
 
-            _channel.QueueDeclare(queue: queueName,
-                                 durable: true,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+            // Declare the topic exchange
+            await _channel.ExchangeDeclareAsync(
+                exchange: "order_exchange",
+                type: ExchangeType.Topic,
+                durable: true,
+                autoDelete: false,
+                arguments: null);
 
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (model, ea) =>
+            // Declare the queue
+            await _channel.QueueDeclareAsync(
+                queue: queueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
+
+            // Bind the queue to the exchange with the routing key
+            await _channel.QueueBindAsync(
+                queue: queueName,
+                exchange: "order_exchange",
+                routingKey: "order.placed");
+
+            // Set up the consumer
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+            consumer.ReceivedAsync += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                messageHandler(message); // Call the provided handler
+                Console.WriteLine($"Received message: {message}");
+
+                // Process the message using the provided handler
+                await messageHandler(message);
+
+                // Acknowledge the message
+                await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
-            _channel.BasicConsume(queue: queueName,
-                                 autoAck: true, // Set to false for manual acknowledgment if needed
-                                 consumer: consumer);
+            // Start consuming
+            await _channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
         }
 
-        // Cleanup (optional, if used outside a hosted service)
-        public void Dispose()
+        public async Task DisposeAsync()
         {
-            _channel?.Dispose();
-            _connection?.Dispose();
+            if (_channel != null)
+            {
+                await _channel.CloseAsync();
+                _channel.Dispose();
+            }
+            if (_connection != null)
+            {
+                await _connection.CloseAsync();
+                _connection.Dispose();
+            }
         }
     }
 }

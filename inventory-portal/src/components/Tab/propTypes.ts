@@ -8,6 +8,7 @@ export interface TabProps {
 
 export interface ScreenLoaderParams {
     screenId: string;
+    RedirectToDefaultTab : () => void
 }
 
 export interface TabInterface {

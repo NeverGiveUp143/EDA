@@ -34,7 +34,7 @@ namespace EDACustomer.Controllers
             {
                 Guid.TryParse(customer.Product, out Guid productId);
                 var message = JsonConvert.SerializeObject(await _customerService.UpdatedProduct(productId, customer.ItemInCart)); 
-                _rabbitMqPublisher.PublishMessage(message, "order_placed_queue");
+                await _rabbitMqPublisher.PublishMessageAsync(message, "order_exchange", "order.placed");
             }
 
             return result;
