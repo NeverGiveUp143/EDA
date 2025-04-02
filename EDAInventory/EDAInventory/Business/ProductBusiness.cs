@@ -46,6 +46,22 @@ namespace EDAInventory.Business
             }
             return result;
         }
-        
+
+        public async Task<string>   DeductStock(Guid productId, int quantity)
+        {
+            
+            var product = await _productRepository.GetProductById(productId);
+            if (product == null)
+            {
+                Console.WriteLine($"Product {productId} not found in inventory.");
+                return $"Product {productId} not found in inventory.";
+            }
+
+            product.Quantity -= quantity;
+            await _productRepository.UpsertProduct(product,true);
+
+           return string.Empty;
+        }
+
     }
 }

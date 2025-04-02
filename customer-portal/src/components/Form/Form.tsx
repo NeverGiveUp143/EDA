@@ -33,7 +33,7 @@ const RenderFormFields = ({ type, field, watch, url, register, errors , style }:
   }
 };
 
-const Form = ({ postUrl, configData, formValidationSchema,RedirectToDefaultTab }: FormProps) => {
+const Form = ({ postUrl, configData,formValidationSchema,RedirectToDefaultTab }: FormProps) => {
   const formData = useMemo(() => {
     return Object.fromEntries(
       Object.keys(configData).map((field) => [field, configData[field]?.defaultValue ?? ""])
@@ -42,7 +42,7 @@ const Form = ({ postUrl, configData, formValidationSchema,RedirectToDefaultTab }
 
   const [isOpen, setIsOpen] = useState(false);
   const [toastProps , setToastProps] = useState<ToastProps>();
-
+  
   const {
     register,
     handleSubmit,
@@ -58,6 +58,7 @@ const Form = ({ postUrl, configData, formValidationSchema,RedirectToDefaultTab }
   useEffect(() => {
     Object.keys(formData).forEach((field) => setValue(field, formData[field]));
   }, [formData, setValue]);
+
 
   const handleToastClose = (
     _event?: React.SyntheticEvent | Event,
@@ -78,7 +79,7 @@ const Form = ({ postUrl, configData, formValidationSchema,RedirectToDefaultTab }
     setIsOpen(true);
     setTimeout(() => {
       RedirectToDefaultTab();
-    },4000)  
+    },2000)  
   } else {
     setToastProps({ message: result?.error ?? FORMERRORMESSAGE , severity: Severity.Error , isOpen: false , onClose : handleToastClose});
     setIsOpen(true);

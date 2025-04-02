@@ -78,7 +78,7 @@ const Form = ({ postUrl, configData, formValidationSchema,RedirectToDefaultTab }
       setIsOpen(true);
       setTimeout(() => {
         RedirectToDefaultTab();
-      },4000)  
+      },2000)  
     } else {
       setToastProps({ message: result?.error ?? FORMERRORMESSAGE , severity: Severity.Error , isOpen: false , onClose : handleToastClose});
       setIsOpen(true);

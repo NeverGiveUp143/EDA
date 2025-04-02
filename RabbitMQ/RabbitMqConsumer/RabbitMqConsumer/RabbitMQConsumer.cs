@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RabbitMqConsumer
 {
-   public class RabbitMQConsumer : IRabbitMqConsumer
+    public class RabbitMQConsumer : IRabbitMqConsumer
     {
         private readonly string _hostName;
         private readonly string _username;
@@ -20,7 +20,7 @@ namespace RabbitMqConsumer
             _password = password;
         }
 
-        public async Task StartConsumingAsync(string queueName, Func<string, Task> messageHandler)
+        public async Task StartConsumingAsync(string queueName, string exchangeName, Func<string, Task> messageHandler)
         {
             var factory = new ConnectionFactory
             {
@@ -35,7 +35,7 @@ namespace RabbitMqConsumer
 
             // Declare the topic exchange
             await _channel.ExchangeDeclareAsync(
-                exchange: "order_exchange",
+                exchange: exchangeName,
                 type: ExchangeType.Topic,
                 durable: true,
                 autoDelete: false,
@@ -52,8 +52,13 @@ namespace RabbitMqConsumer
             // Bind the queue to the exchange with the routing key
             await _channel.QueueBindAsync(
                 queue: queueName,
-                exchange: "order_exchange",
-                routingKey: "order.placed");
+                exchange: exchangeName,
+                routingKey: "order.sucess");
+
+            await _channel.QueueBindAsync(
+                queue: queueName,
+                exchange: exchangeName,
+                routingKey: "order.failed");
 
             // Set up the consumer
             var consumer = new AsyncEventingBasicConsumer(_channel);

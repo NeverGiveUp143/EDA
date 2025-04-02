@@ -45,5 +45,15 @@ namespace EDAInventory.Repository
             }
         }
 
+       public async Task<Product?> GetProductById(Guid productId)
+        {
+
+            if(productId == Guid.Empty)
+            {
+                return null; 
+            }
+
+            return await _dBContext.Products.FirstOrDefaultAsync(x => x.ProductId == productId) ?? null;
+        }
     }
 }

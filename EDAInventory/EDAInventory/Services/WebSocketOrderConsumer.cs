@@ -1,7 +1,10 @@
-﻿using EDAInventory.Business.Interface;
+﻿using EDADBContext.Models;
+using EDAInventory.Business.Interface;
 using EDAInventory.Models;
 using Newtonsoft.Json;
 using RabbitMqConsumer.Interface;
+using RabbitMQPublisher.Interface;
+using System.Dynamic;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -10,12 +13,15 @@ namespace EDAInventory.Services
     public class WebSocketOrderConsumer : BackgroundService
     {
         private readonly IRabbitMqConsumer _rabbitMqConsumer;
-        private readonly IServiceProvider _serviceProvider; // Replace IProductBusiness with IServiceProvider
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IRabbitMqPublisher _rabbitMqPublisher;
         private readonly List<WebSocket> _clients = new();
-        public WebSocketOrderConsumer(IRabbitMqConsumer rabbitMqConsumer, IServiceProvider serviceProvider)
+        public WebSocketOrderConsumer(IRabbitMqConsumer rabbitMqConsumer, IServiceProvider serviceProvider, IRabbitMqPublisher rabbitMqPublisher)
         {
             _rabbitMqConsumer = rabbitMqConsumer;
             _serviceProvider = serviceProvider;
+            _rabbitMqPublisher = rabbitMqPublisher;
+
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -23,29 +29,58 @@ namespace EDAInventory.Services
             Console.WriteLine("WebSocketOrderConsumer starting...");
             try
             {
-                await _rabbitMqConsumer.StartConsumingAsync("order_exchange", message =>
+                await _rabbitMqConsumer.StartConsumingAsync("order_placed_queue", "order_exchange", message =>
                 {
-                    Console.WriteLine($"Consumed message: {message}");
-                    var eventMessage = JsonConvert.SerializeObject(new { eventType = "OrderPlaced", data = JsonConvert.DeserializeObject(message) });
+                    var eventMessage = JsonConvert.DeserializeObject<EventMessage<string>>(message);
+                    var data = eventMessage?.Data;
+                    var eventType = eventMessage?.EventType ?? "Unknown";
+
                     Task.Run(async () =>
                     {
-                        using (var scope = _serviceProvider.CreateScope())
+                        if (eventMessage != null && eventMessage.Data != null && data != null)
                         {
-                            var productBusiness = scope.ServiceProvider.GetRequiredService<IProductBusiness>();
-                            var product = JsonConvert.DeserializeObject<ProductModel>(message);
-                            await productBusiness.UpsertProduct(product, true);
-                        }
+                            var customer = JsonConvert.DeserializeObject<CustomerModel>(data);
 
-                        lock (_clients)
-                        {
-                            Console.WriteLine($"Broadcasting to {_clients.Count} clients");
-                            foreach (var client in _clients.ToArray())
+                            using (var scope = _serviceProvider.CreateScope())
                             {
-                                if (client.State == WebSocketState.Open)
+                                if (eventType == "order.sucess")
                                 {
-                                    var buffer = Encoding.UTF8.GetBytes(eventMessage);
-                                    client.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, stoppingToken);
-                                    Console.WriteLine("Message sent to client");
+                                    Console.WriteLine("Updating inventory for placed order...");
+                                    var _productBusiness = scope.ServiceProvider.GetRequiredService<IProductBusiness>();
+                                    Guid.TryParse(customer?.Product, out Guid productId);
+                                    int itemInCart = customer?.ItemInCart ?? 0;
+                                    string result = await _productBusiness.DeductStock(productId, itemInCart);
+                                    var message = string.Empty;
+
+                                    if (string.IsNullOrEmpty(result))
+                                    {
+                                        message = JsonConvert.SerializeObject(new { eventType = "order.sucess", data = JsonConvert.SerializeObject(customer) });
+                                        await _rabbitMqPublisher.PublishMessageAsync(message, "order_status", "order.updated");
+                                    }
+                                    else
+                                    {
+                                        message = JsonConvert.SerializeObject(new { eventType = "order.failed", data = JsonConvert.SerializeObject(customer) });
+                                        await _rabbitMqPublisher.PublishMessageAsync(message, "order_status", "order.failed");
+                                    }
+                                    Console.WriteLine($"Consumed message: {message}");
+                                }
+                                else if (eventType == "order.failed")
+                                {
+                                    Console.WriteLine("Order failed. Inventory update skipped.");
+                                }
+                            }
+
+                            lock (_clients)
+                            {
+                                Console.WriteLine($"Broadcasting to {_clients.Count} clients");
+                                foreach (var client in _clients.ToArray())
+                                {
+                                    if (client.State == WebSocketState.Open)
+                                    {
+                                        var buffer = Encoding.UTF8.GetBytes(message);
+                                        client.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, stoppingToken);
+                                        Console.WriteLine("Message sent to client");
+                                    }
                                 }
                             }
                         }
@@ -60,7 +95,7 @@ namespace EDAInventory.Services
                 Console.WriteLine($"Error in WebSocketOrderConsumer: {ex.Message}");
                 throw;
             }
-           
+
         }
 
         public async Task HandleWebSocket(HttpContext context)

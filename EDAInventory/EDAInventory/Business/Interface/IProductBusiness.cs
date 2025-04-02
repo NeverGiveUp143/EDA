@@ -7,5 +7,6 @@ namespace EDAInventory.Business.Interface
     {
         Task<List<ProductModel>> GetProductsList();
         Task<string> UpsertProduct(ProductModel? product, bool IsUpdate = false);
+        Task<string> DeductStock(Guid productId, int quantity);
     }
 }
