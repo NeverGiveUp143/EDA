@@ -3,6 +3,6 @@
 
     public interface IRabbitMqConsumer
     {
-        Task StartConsumingAsync(string queueName, string exchangeName, Func<string, Task> messageHandler);
+        Task StartConsumingAsync(string exchangeName, List<string> routingKeys, Func<string, Task> messageHandler);
     }
 }

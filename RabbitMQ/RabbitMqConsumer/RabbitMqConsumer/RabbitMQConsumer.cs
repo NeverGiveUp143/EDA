@@ -20,7 +20,7 @@ namespace RabbitMqConsumer
             _password = password;
         }
 
-        public async Task StartConsumingAsync(string queueName, string exchangeName, Func<string, Task> messageHandler)
+        public async Task StartConsumingAsync(string exchangeName, List<string> routingKeys, Func<string, Task> messageHandler)
         {
             var factory = new ConnectionFactory
             {
@@ -41,24 +41,21 @@ namespace RabbitMqConsumer
                 autoDelete: false,
                 arguments: null);
 
-            // Declare the queue
-            await _channel.QueueDeclareAsync(
-                queue: queueName,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
+            var queueName = (await _channel.QueueDeclareAsync(
+                     queue: "",
+                     durable: false,
+                     exclusive: true,
+                     autoDelete: true,
+                     arguments: null)).QueueName;
 
-            // Bind the queue to the exchange with the routing key
-            await _channel.QueueBindAsync(
-                queue: queueName,
-                exchange: exchangeName,
-                routingKey: "order.sucess");
-
-            await _channel.QueueBindAsync(
-                queue: queueName,
-                exchange: exchangeName,
-                routingKey: "order.failed");
+            // Bind the anonymous queue to the exchange for the routing keys
+            foreach (var routingKey in routingKeys)
+            {
+                await _channel.QueueBindAsync(
+                    queue: queueName, 
+                    exchange: exchangeName, 
+                    routingKey: routingKey);
+            }
 
             // Set up the consumer
             var consumer = new AsyncEventingBasicConsumer(_channel);

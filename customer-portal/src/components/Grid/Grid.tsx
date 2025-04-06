@@ -16,7 +16,7 @@ const Grid = (props: GridProps) => {
             const cols = Object.keys(data[0]).map((key) => ({
                 field: key,
                 headerName: key.toUpperCase(),
-                width: 150,
+                width: 250,
             }));
             setColumns(cols);
             setRows(data);

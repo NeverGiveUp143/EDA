@@ -20,11 +20,7 @@ namespace EDACustomer.Business
         {
             try
             {
-                List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerViewModelMapping);
-                List<Customer> DbValue = await _customerRepository.GetCustomersList();
-                List<CustomerModel> customers = Helper.ModelMapper.SourceModelToTargetModel<Customer, CustomerModel>(DbValue, customerModelMappingsValue);
-
-                return customers;
+                return await _customerRepository.GetCustomersList();
             }
             catch (Exception ex)
             {

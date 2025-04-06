@@ -10,5 +10,6 @@ namespace EDADBContext.Models
         public string Name { get; set; }
         public Guid ProductId { get; set; }
         public int ItemInCart { get; set; }
+        public string Email { get; set; }
     }
 }

@@ -13,6 +13,7 @@ const Customer = () => {
     "Name": { type: "TextField", defaultValue: "" , style : { height: "25px" }},
     "Product": { type: "DropDown", defaultValue: "" , url : 'https://localhost:7249/Customer/GetProductDDList', style : { height: "34px" , width: "175px" }},
     "ItemInCart": { type: "NumberField", defaultValue: 0,  style : { height: "25px" }},
+    "Email": { type: "TextField", defaultValue: "" , style : { height: "25px" }}
   };
   
   const formValidationSchema = yup.object().shape({
@@ -25,6 +26,7 @@ const Customer = () => {
       .integer("Item In Cart must be an integer")
       .min(1, "Must be at least 1")
       .max(999, 'Maximum 3 characters allowed'),
+      Email : yup.string()?.trim().required("Email is required").email("Email is not valid"),
   });
   
   const data : GridProps = {

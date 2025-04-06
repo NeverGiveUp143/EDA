@@ -31,8 +31,11 @@ namespace EDACustomer.Controllers
             string result = await _customerBusiness.AddCustomer(customer);
             var message = string.Empty;
 
-            if (string.IsNullOrEmpty(result))
+            int.TryParse(result, out int custID);
+
+            if (custID > 0)
             {
+                customer.Id = custID;
                 message = JsonConvert.SerializeObject(new { eventType = "order.sucess", data = JsonConvert.SerializeObject(customer) });
                 await _rabbitMqPublisher.PublishMessageAsync(message, "order_exchange", "order.sucess");
             }

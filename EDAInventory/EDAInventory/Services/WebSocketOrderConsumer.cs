@@ -1,10 +1,8 @@
-﻿using EDADBContext.Models;
-using EDAInventory.Business.Interface;
+﻿using EDAInventory.Business.Interface;
 using EDAInventory.Models;
 using Newtonsoft.Json;
 using RabbitMqConsumer.Interface;
 using RabbitMQPublisher.Interface;
-using System.Dynamic;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -21,7 +19,6 @@ namespace EDAInventory.Services
             _rabbitMqConsumer = rabbitMqConsumer;
             _serviceProvider = serviceProvider;
             _rabbitMqPublisher = rabbitMqPublisher;
-
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,7 +26,7 @@ namespace EDAInventory.Services
             Console.WriteLine("WebSocketOrderConsumer starting...");
             try
             {
-                await _rabbitMqConsumer.StartConsumingAsync("order_placed_queue", "order_exchange", message =>
+                await _rabbitMqConsumer.StartConsumingAsync("order_exchange", Constants.OrderExchangeRoutingKeys, message =>
                 {
                     var eventMessage = JsonConvert.DeserializeObject<EventMessage<string>>(message);
                     var data = eventMessage?.Data;
@@ -45,16 +42,19 @@ namespace EDAInventory.Services
                             {
                                 if (eventType == "order.sucess")
                                 {
-                                    Console.WriteLine("Updating inventory for placed order...");
                                     var _productBusiness = scope.ServiceProvider.GetRequiredService<IProductBusiness>();
                                     Guid.TryParse(customer?.Product, out Guid productId);
                                     int itemInCart = customer?.ItemInCart ?? 0;
+                                    string productName = await _productBusiness.GetProductById(productId);
+                                    if (!string.IsNullOrEmpty(productName) && customer != null)
+                                    {
+                                        customer.Product = productName;
+                                    }
                                     string result = await _productBusiness.DeductStock(productId, itemInCart);
                                     var message = string.Empty;
-
                                     if (string.IsNullOrEmpty(result))
                                     {
-                                        message = JsonConvert.SerializeObject(new { eventType = "order.sucess", data = JsonConvert.SerializeObject(customer) });
+                                        message = JsonConvert.SerializeObject(new { eventType = "order.updated", data = JsonConvert.SerializeObject(customer) });
                                         await _rabbitMqPublisher.PublishMessageAsync(message, "order_status", "order.updated");
                                     }
                                     else

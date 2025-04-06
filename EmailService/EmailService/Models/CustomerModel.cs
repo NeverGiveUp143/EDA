@@ -1,5 +1,6 @@
 ﻿#nullable disable
-namespace EDAInventory.Models
+
+namespace EmailService.Models
 {
     public class CustomerModel
     {
