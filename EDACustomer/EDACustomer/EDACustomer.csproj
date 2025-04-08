@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\APIHandler\APIHandler\APIHandler.csproj" />
     <ProjectReference Include="..\..\EDADBContext\EDADBContext\EDADBContext.csproj" />
     <ProjectReference Include="..\..\Helper\Helper\Helper.csproj" />
     <ProjectReference Include="..\..\RabbitMQ\RabbitMQPublisher\RabbitMQPublisher\RabbitMQPublisher.csproj" />

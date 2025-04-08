@@ -46,8 +46,8 @@ const Customer = () => {
 
   const tabs : TabProps = {
      tabs : [
-       {id : 'customersList', label : 'Customers Checkout History', disabled : false} ,
-       {id : 'customercheckout', label : 'Customer Checkout', disabled : false} 
+       {id : 'customersList', label : 'Orders Checkout History', disabled : false} ,
+       {id : 'customercheckout', label : 'Order Checkout', disabled : false} 
       ],
      defaultTab : 'customersList',
     screenLoader : screenLoader

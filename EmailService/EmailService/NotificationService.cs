@@ -29,7 +29,6 @@ namespace EmailService
                 .Select(s => s.Trim())
                 .ToList() ?? new List<string>();
 
-            // Prepare value list based on mapping
             List<object> mappedValues = new();
             foreach (var key in mailBodyMapping)
             {

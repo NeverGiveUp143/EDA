@@ -40,7 +40,6 @@ namespace RabbitMQPublisher
 
             await channel.BasicPublishAsync(exchange: exchangeName, routingKey: routingKey, body: body);
 
-            Console.WriteLine($"Message published to exchange '{exchangeName}' with routing key '{routingKey}': {message}");
         }
 
     }

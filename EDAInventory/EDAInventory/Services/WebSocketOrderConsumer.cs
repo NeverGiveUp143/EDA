@@ -26,7 +26,7 @@ namespace EDAInventory.Services
             Console.WriteLine("WebSocketOrderConsumer starting...");
             try
             {
-                await _rabbitMqConsumer.StartConsumingAsync("order_exchange", Constants.OrderExchangeRoutingKeys, message =>
+                await _rabbitMqConsumer.StartConsumingAsync("payment_status", Constants.OrderExchangeRoutingKeys, message =>
                 {
                     var eventMessage = JsonConvert.DeserializeObject<EventMessage<string>>(message);
                     var data = eventMessage?.Data;
@@ -40,7 +40,7 @@ namespace EDAInventory.Services
 
                             using (var scope = _serviceProvider.CreateScope())
                             {
-                                if (eventType == "order.sucess")
+                                if (eventType == "payment.sucess")
                                 {
                                     var _productBusiness = scope.ServiceProvider.GetRequiredService<IProductBusiness>();
                                     Guid.TryParse(customer?.Product, out Guid productId);
@@ -64,10 +64,7 @@ namespace EDAInventory.Services
                                     }
                                     Console.WriteLine($"Consumed message: {message}");
                                 }
-                                else if (eventType == "order.failed")
-                                {
-                                    Console.WriteLine("Order failed. Inventory update skipped.");
-                                }
+                                
                             }
 
                             lock (_clients)

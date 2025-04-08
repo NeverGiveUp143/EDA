@@ -36,13 +36,13 @@ namespace EDACustomer.Controllers
             if (custID > 0)
             {
                 customer.Id = custID;
-                message = JsonConvert.SerializeObject(new { eventType = "order.sucess", data = JsonConvert.SerializeObject(customer) });
-                await _rabbitMqPublisher.PublishMessageAsync(message, "order_exchange", "order.sucess");
+                message = JsonConvert.SerializeObject(new { eventType = "payment.sucess", data = JsonConvert.SerializeObject(customer) });
+                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "payment.sucess");
             }
             else
             {
-                message = JsonConvert.SerializeObject(new { eventType = "order.failed", data = JsonConvert.SerializeObject(customer) });
-                await _rabbitMqPublisher.PublishMessageAsync(message, "order_exchange", "order.failed");
+                message = JsonConvert.SerializeObject(new { eventType = "payment.failed", data = JsonConvert.SerializeObject(customer) });
+                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "paymnet.failed");
             }
 
             return result;
