@@ -7,6 +7,8 @@ using EDAInventory.Services;
 using Microsoft.EntityFrameworkCore;
 using RabbitMqConsumer;
 using RabbitMqConsumer.Interface;
+using RabbitMQPublisher.Interface;
+using RabbitMQPublisher;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,13 @@ builder.Services.AddSingleton<IRabbitMqConsumer>(sp =>
         builder.Configuration["RabbitMQ:HostName"] ?? "localhost",
         builder.Configuration["RabbitMQ:Username"] ?? "guest",
         builder.Configuration["RabbitMQ:Password"] ?? "guest"
+    ));
+
+builder.Services.AddSingleton<IRabbitMqPublisher>(sp =>
+    new RabbitMqPublisher(
+        hostName: builder.Configuration["RabbitMQ:HostName"] ?? "localhost",
+        username: builder.Configuration["RabbitMQ:Username"] ?? "guest",
+        password: builder.Configuration["RabbitMQ:Password"] ?? "guest"
     ));
 
 builder.Services.AddHostedService<WebSocketOrderConsumer>();

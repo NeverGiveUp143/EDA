@@ -5,7 +5,7 @@ namespace EDACustomer.Repository.Interface
 {
     public interface ICustomerRepository
     {
-        Task<List<Customer>> GetCustomersList();
+        Task<List<CustomerModel>> GetCustomersList();
         Task<string> AddCustomer(Customer customer);
     }
 }

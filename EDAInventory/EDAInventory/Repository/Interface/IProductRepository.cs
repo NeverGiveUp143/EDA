@@ -7,5 +7,6 @@ namespace EDAInventory.Repository.Interface
     {
         Task<List<Product>> GetProductsList();
         Task<string> UpsertProduct(Product? product, bool IsUpdate = false);
+        Task<Product?> GetProductById(Guid productId);
     }
 }

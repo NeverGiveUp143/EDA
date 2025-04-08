@@ -1,8 +1,11 @@
-﻿using EDACustomer.Business.Interface;
+﻿using APIHandler.Models;
+using APIHandler;
+using EDACustomer.Business.Interface;
 using EDACustomer.Models;
 using EDACustomer.Repository.Interface;
 using EDADBContext.Models;
 using Helper.Models;
+using Newtonsoft.Json;
 
 namespace EDACustomer.Business
 {
@@ -20,13 +23,9 @@ namespace EDACustomer.Business
         {
             try
             {
-                List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerViewModelMapping);
-                List<Customer> DbValue = await _customerRepository.GetCustomersList();
-                List<CustomerModel> customers = Helper.ModelMapper.SourceModelToTargetModel<Customer, CustomerModel>(DbValue, customerModelMappingsValue);
-
-                return customers;
+                return await _customerRepository.GetCustomersList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new List<CustomerModel>();
             }
@@ -34,10 +33,20 @@ namespace EDACustomer.Business
 
         public async Task<string> AddCustomer(CustomerModel customer)
         {
-            List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerAddModelMapping);
-            Customer customerDataObj = Helper.ModelMapper.SourceModelToTargetModel<CustomerModel, Customer>(customer, customerModelMappingsValue);
+            var requestPayload = JsonConvert.SerializeObject(customer);
+            string? url = Environment.GetEnvironmentVariable(Constants.PaymentEndPoint) ?? "https://localhost:7253/Payment";
+            APIResult<CustomerModel> response = await APIHandlerService<CustomerModel>.PostHandlerService(JsonConvert.SerializeObject(requestPayload), url);
+            if (response != null)
+            {
+                List<ModelMapping> customerModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.CustomerAddModelMapping);
+                Customer customerDataObj = Helper.ModelMapper.SourceModelToTargetModel<CustomerModel, Customer>(customer, customerModelMappingsValue);
 
-            return await _customerRepository.AddCustomer(customerDataObj);
+                return await _customerRepository.AddCustomer(customerDataObj);
+            }
+            else
+            {
+                return response?.Message ?? Constants.PaymentServiceFailed;
+            }
         }
     }
 }

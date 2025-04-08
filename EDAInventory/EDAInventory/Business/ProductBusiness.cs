@@ -3,6 +3,7 @@ using EDAInventory.Business.Interface;
 using EDAInventory.Models;
 using EDAInventory.Repository.Interface;
 using Helper.Models;
+using System.Globalization;
 
 namespace EDAInventory.Business
 {
@@ -45,6 +46,32 @@ namespace EDAInventory.Business
                 result = ex.Message;
             }
             return result;
+        }
+
+        public async Task<string> DeductStock(Guid productId, int quantity)
+        {
+            
+            var product = await _productRepository.GetProductById(productId);
+            if (product == null)
+            {
+                return $"Product {productId} not found in inventory.";
+            }
+
+            product.Quantity -= quantity;
+            await _productRepository.UpsertProduct(product,true);
+
+           return string.Empty;
+        }
+
+        public async Task<string> GetProductById(Guid productId) 
+        { 
+
+            var product =  await _productRepository.GetProductById(productId);
+            if (product != null)
+            {
+                return product.Name;
+            }
+            return string.Empty;
         }
         
     }

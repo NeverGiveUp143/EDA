@@ -9,5 +9,7 @@
         public const string ProductModelMapping = "ProductModelMapping";
         public const string ProductDDModelMapping = "ProductDDModelMapping";
         public const string CustomerAddModelMapping = "CustomerAddModelMapping";
+        public const string PaymentEndPoint = "PaymentEndPoint";
+        public const string PaymentServiceFailed = "An Error Ocuured while Processing the payment";
     }
 }

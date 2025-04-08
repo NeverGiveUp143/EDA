@@ -30,12 +30,12 @@ const Inventory = () => {
     url : 'https://localhost:7204/Inventory/GetProducts'
   } 
 
-  const screenLoader = ({ screenId } : ScreenLoaderParams) => {
+  const screenLoader = ({ screenId , RedirectToDefaultTab } : ScreenLoaderParams) => {
     switch (screenId) {
       case "products":
         return <Grid {...data} />;
       case "addProducts":
-        return <Form  postUrl="https://localhost:7204/Inventory/AddProduct" configData={configData}  formValidationSchema={formValidationSchema}/>;
+        return <Form  postUrl="https://localhost:7204/Inventory/AddProduct" configData={configData}  formValidationSchema={formValidationSchema} RedirectToDefaultTab = {RedirectToDefaultTab}/>;
       default:
         break;
     }

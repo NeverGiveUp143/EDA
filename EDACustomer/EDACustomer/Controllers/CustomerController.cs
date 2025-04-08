@@ -29,12 +29,20 @@ namespace EDACustomer.Controllers
         public async Task<string> AddCustomer(CustomerModel customer)
         {
             string result = await _customerBusiness.AddCustomer(customer);
+            var message = string.Empty;
 
-            if (string.IsNullOrEmpty(result))
+            int.TryParse(result, out int custID);
+
+            if (custID > 0)
             {
-                Guid.TryParse(customer.Product, out Guid productId);
-                var message = JsonConvert.SerializeObject(await _customerService.UpdatedProduct(productId, customer.ItemInCart)); 
-                _rabbitMqPublisher.PublishMessage(message, "order_placed_queue");
+                customer.Id = custID;
+                message = JsonConvert.SerializeObject(new { eventType = "payment.sucess", data = JsonConvert.SerializeObject(customer) });
+                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "payment.sucess");
+            }
+            else
+            {
+                message = JsonConvert.SerializeObject(new { eventType = "payment.failed", data = JsonConvert.SerializeObject(customer) });
+                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "paymnet.failed");
             }
 
             return result;

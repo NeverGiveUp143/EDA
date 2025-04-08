@@ -33,7 +33,7 @@ const RenderFormFields = ({ type, field, watch, url, register, errors , style }:
   }
 };
 
-const Form = ({ postUrl, configData, formValidationSchema }: FormProps) => {
+const Form = ({ postUrl, configData, formValidationSchema,RedirectToDefaultTab }: FormProps) => {
   const formData = useMemo(() => {
     return Object.fromEntries(
       Object.keys(configData).map((field) => [field, configData[field]?.defaultValue ?? ""])
@@ -73,13 +73,16 @@ const Form = ({ postUrl, configData, formValidationSchema }: FormProps) => {
   const onSubmit = async (formValues: any) => {
     const result = await PostApi(postUrl, formValues);
 
-  if (result.success) {
-    setToastProps({ message: FORMSUCCESSMESSAGE, severity: Severity.Success , isOpen: true , onClose : handleToastClose});
-    setIsOpen(true);
-  } else {
-    setToastProps({ message: result?.error ?? FORMERRORMESSAGE , severity: Severity.Error , isOpen: false , onClose : handleToastClose});
-    setIsOpen(true);
-  }
+    if (result.success) {
+      setToastProps({ message: FORMSUCCESSMESSAGE, severity: Severity.Success , isOpen: true , onClose : handleToastClose});
+      setIsOpen(true);
+      setTimeout(() => {
+        RedirectToDefaultTab();
+      },2000)  
+    } else {
+      setToastProps({ message: result?.error ?? FORMERRORMESSAGE , severity: Severity.Error , isOpen: false , onClose : handleToastClose});
+      setIsOpen(true);
+    }
   };
 
   if (!Object.keys(formData).length) return <Typography variant="h6">No Data Received</Typography>;

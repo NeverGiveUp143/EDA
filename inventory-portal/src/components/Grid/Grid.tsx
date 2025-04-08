@@ -5,10 +5,12 @@ import { GridProps } from "./propTypes";
 import useFetch from "../../utils/useFetch";
 
 const Grid = (props: GridProps) => {
-    const { url } = props;   
+    const { url } = props;
     const { data, loading, error } = useFetch<Record<string, any>[]>(url);
+
     const [columns, setColumns] = useState<any[]>([]);
-    const [rows, setRows] = useState<Record<string, unknown>[]>([]);    
+    const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+
     useEffect(() => {
         if (data != null && data?.length > 0) {
             const cols = Object.keys(data[0]).map((key) => ({
@@ -20,8 +22,6 @@ const Grid = (props: GridProps) => {
             setRows(data);
         }
     }, [data]);
-
-
 
     return (
         <Box sx={{ height: 400, width: "100%" }}>

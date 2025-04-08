@@ -1,4 +1,5 @@
-﻿using EDACustomer.Repository.Interface;
+﻿using EDACustomer.Models;
+using EDACustomer.Repository.Interface;
 using EDADBContext;
 using EDADBContext.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,20 @@ namespace EDACustomer.Repository
             _dBContext = dBContext;
         }
 
-        public async Task<List<Customer>> GetCustomersList()
+        public async Task<List<CustomerModel>> GetCustomersList()
         {
-            return await _dBContext.Customer.ToListAsync();
+            return await (from customer in _dBContext.Customer
+                          join product in _dBContext.Products
+                          on customer.ProductId equals product.ProductId
+                          select new CustomerModel
+                          {
+                              Name = customer.Name,
+                              Product = product.Name,
+                              Email = customer.Email,
+                              Id = customer.Id,
+                              ItemInCart = customer.ItemInCart
+                          }).ToListAsync();
+
         }
 
         public async Task<string> AddCustomer(Customer customer)
@@ -27,7 +39,7 @@ namespace EDACustomer.Repository
                 {
                     _dBContext.Customer.Add(customer);
                     var result = await _dBContext.SaveChangesAsync();
-                    return result > 0 ? string.Empty : String.Format(Constants.DBInsertFailureMessage, tableName);
+                    return result > 0 ? customer.Id.ToString() : String.Format(Constants.DBInsertFailureMessage, tableName);
                 }
                 return String.Format(Constants.DataNullErrorMessage, tableName);
             }
