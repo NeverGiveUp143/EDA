@@ -3,6 +3,7 @@ using EDACustomer.Models;
 using EDACustomer.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using RabbitMQ.Client;
 using RabbitMQPublisher.Interface;
 
 namespace EDACustomer.Controllers
@@ -38,14 +39,14 @@ namespace EDACustomer.Controllers
             {
                 customer.Id = custID;
                 message = JsonConvert.SerializeObject(new { eventType = "payment.sucess", data = JsonConvert.SerializeObject(customer) });
-                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "payment.sucess");
+                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_exchange", "payment.sucess", "payment_queue", ExchangeType.Fanout);
 
                 return string.Empty;
             }
             else
             {
                 message = JsonConvert.SerializeObject(new { eventType = "payment.failed", data = JsonConvert.SerializeObject(customer) });
-                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "payment.failed");
+                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_exchange", "payment.failed", "payment_queue", ExchangeType.Fanout);
             }
 
             return result;

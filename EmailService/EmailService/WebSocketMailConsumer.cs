@@ -3,6 +3,7 @@ using EmailService.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using RabbitMQ.Client;
 using RabbitMqConsumer.Interface;
 
 namespace EmailService
@@ -22,10 +23,10 @@ namespace EmailService
         {
             try
             {
-                await _rabbitMqConsumer.StartConsumingAsync("order_status", Constants.OrderStatusRoutingKeys, HandleMessageAsync);
+                await _rabbitMqConsumer.StartConsumingAsync("order_queue", "order_exchange", ExchangeType.Topic,  HandleMessageAsync);
 
                 
-                await _rabbitMqConsumer.StartConsumingAsync("payment_status", Constants.PaymentStatusRoutingKeys, HandleMessageAsync);
+                await _rabbitMqConsumer.StartConsumingAsync("notification_queue", "payment_exchange", ExchangeType.Fanout, HandleMessageAsync);
             }
             catch (Exception ex)
             {

@@ -22,7 +22,8 @@ namespace EDACustomer.Repository
                           select new CustomerModel
                           {
                               Name = customer.Name,
-                              Product = product.Name,
+                              Product = customer.ProductId.ToString(),
+                              ProductName = product.Name,
                               Email = customer.Email,
                               Id = customer.Id,
                               ItemInCart = customer.ItemInCart

@@ -1,6 +1,7 @@
 ﻿using EDAInventory.Business.Interface;
 using EDAInventory.Models;
 using Newtonsoft.Json;
+using RabbitMQ.Client;
 using RabbitMqConsumer.Interface;
 using RabbitMQPublisher.Interface;
 using System.Net.WebSockets;
@@ -26,7 +27,7 @@ namespace EDAInventory.Services
             Console.WriteLine("WebSocketOrderConsumer starting...");
             try
             {
-                await _rabbitMqConsumer.StartConsumingAsync("payment_status", Constants.OrderExchangeRoutingKeys, message =>
+                await _rabbitMqConsumer.StartConsumingAsync("inventory_queue", "payment_exchange", ExchangeType.Fanout, message =>
                 {
                     var eventMessage = JsonConvert.DeserializeObject<EventMessage<string>>(message);
                     var data = eventMessage?.Data;
@@ -50,16 +51,15 @@ namespace EDAInventory.Services
                                     if (string.IsNullOrEmpty(result))
                                     {
                                         message = JsonConvert.SerializeObject(new { eventType = "order.updated", data = JsonConvert.SerializeObject(customer) });
-                                        await _rabbitMqPublisher.PublishMessageAsync(message, "order_status", "order.updated");
+                                        await _rabbitMqPublisher.PublishMessageAsync(message, "order_exchange", "order.updated", "order_queue", ExchangeType.Topic);
                                     }
                                     else
                                     {
                                         message = JsonConvert.SerializeObject(new { eventType = "order.failed", data = JsonConvert.SerializeObject(customer) });
-                                        await _rabbitMqPublisher.PublishMessageAsync(message, "order_status", "order.failed");
+                                        await _rabbitMqPublisher.PublishMessageAsync(message, "order_exchange", "order.failed", "order_queue", ExchangeType.Topic);
                                     }
                                     Console.WriteLine($"Consumed message: {message}");
                                 }
-                                
                             }
 
                             lock (_clients)

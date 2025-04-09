@@ -17,7 +17,7 @@ namespace RabbitMQPublisher
             _password = password;
         }
 
-        public async Task PublishMessageAsync(string message, string exchangeName, string routingKey)
+        public async Task PublishMessageAsync(string message, string exchangeName, string routingKey, string queueName, string exchangeType)
         {
             var factory = new ConnectionFactory
             {
@@ -27,20 +27,34 @@ namespace RabbitMQPublisher
             };
 
             await using var connection = await factory.CreateConnectionAsync();
-            await using var channel = await connection.CreateChannelAsync(); 
+            await using var channel = await connection.CreateChannelAsync();
 
-            await channel.ExchangeDeclareAsync( 
+            await channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
-                type: ExchangeType.Topic,
+                type: exchangeType,
                 durable: true,
                 autoDelete: false,
                 arguments: null);
 
+            // Always declare and bind the queue
+            await channel.QueueDeclareAsync(
+                queue: queueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
+
+            var bindingRoutingKey = exchangeType == ExchangeType.Fanout ? string.Empty : routingKey;
+
+            await channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: bindingRoutingKey);
+
             var body = Encoding.UTF8.GetBytes(message);
 
-            await channel.BasicPublishAsync(exchange: exchangeName, routingKey: routingKey, body: body);
+            await channel.BasicPublishAsync(exchange: exchangeName, routingKey: bindingRoutingKey, body: body);
 
+            Console.WriteLine($"[x] Published to '{exchangeName}' with key '{bindingRoutingKey}': {message}");
         }
+
 
     }
 

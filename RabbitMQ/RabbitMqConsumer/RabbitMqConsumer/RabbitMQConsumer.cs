@@ -2,6 +2,7 @@
 using RabbitMQ.Client.Events;
 using RabbitMqConsumer.Interface;
 using System.Text;
+using System.Threading.Channels;
 
 namespace RabbitMqConsumer
 {
@@ -20,7 +21,7 @@ namespace RabbitMqConsumer
             _password = password;
         }
 
-        public async Task StartConsumingAsync(string exchangeName, List<string> routingKeys, Func<string, Task> messageHandler)
+        public async Task StartConsumingAsync(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)
         {
             var factory = new ConnectionFactory
             {
@@ -29,51 +30,43 @@ namespace RabbitMqConsumer
                 Password = _password
             };
 
-            // Create connection and channel asynchronously
             _connection = await factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
 
-            // Declare the topic exchange
+            // Declare the exchange
             await _channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
-                type: ExchangeType.Topic,
+                type: exchangeType,
                 durable: true,
                 autoDelete: false,
                 arguments: null);
 
-            var queueName = (await _channel.QueueDeclareAsync(
-                     queue: "",
-                     durable: false,
-                     exclusive: true,
-                     autoDelete: true,
-                     arguments: null)).QueueName;
+            // Declare the queue
+            await _channel.QueueDeclareAsync(
+                queue: queueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
 
-            // Bind the anonymous queue to the exchange for the routing keys
-            foreach (var routingKey in routingKeys)
-            {
-                await _channel.QueueBindAsync(
-                    queue: queueName, 
-                    exchange: exchangeName, 
-                    routingKey: routingKey);
-            }
+            // ❗️Bind the queue to the exchange
+            var bindingRoutingKey = exchangeType == ExchangeType.Fanout ? string.Empty : queueName;
+            await _channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: bindingRoutingKey);
 
-            // Set up the consumer
+            // Set up consumer
             var consumer = new AsyncEventingBasicConsumer(_channel);
             consumer.ReceivedAsync += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($"Received message: {message}");
 
-                // Process the message using the provided handler
                 await messageHandler(message);
-
-                // Acknowledge the message
                 await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
-            // Start consuming
             await _channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+
+            Console.WriteLine($"✅ Started consuming from '{queueName}' bound to '{exchangeName}' ({exchangeType})");
         }
 
         public async Task DisposeAsync()
