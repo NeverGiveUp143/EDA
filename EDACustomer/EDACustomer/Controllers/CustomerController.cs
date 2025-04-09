@@ -29,8 +29,9 @@ namespace EDACustomer.Controllers
         public async Task<string> AddCustomer(CustomerModel customer)
         {
             string result = await _customerBusiness.AddCustomer(customer);
+            Guid.TryParse(customer.Product, out Guid productId);
+            customer.ProductName = await _productBusiness.GetProductNameById(productId);
             var message = string.Empty;
-
             int.TryParse(result, out int custID);
 
             if (custID > 0)
@@ -38,11 +39,13 @@ namespace EDACustomer.Controllers
                 customer.Id = custID;
                 message = JsonConvert.SerializeObject(new { eventType = "payment.sucess", data = JsonConvert.SerializeObject(customer) });
                 await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "payment.sucess");
+
+                return string.Empty;
             }
             else
             {
                 message = JsonConvert.SerializeObject(new { eventType = "payment.failed", data = JsonConvert.SerializeObject(customer) });
-                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "paymnet.failed");
+                await _rabbitMqPublisher.PublishMessageAsync(message, "payment_status", "payment.failed");
             }
 
             return result;

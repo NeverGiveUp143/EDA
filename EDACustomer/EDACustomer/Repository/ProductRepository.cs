@@ -38,5 +38,16 @@ namespace EDACustomer.Repository
                 value = x.ProductId.ToString()
             }).ToListAsync();
         }
+
+        public async Task<Product?> GetProductNameById(Guid productId)
+        {
+
+            if (productId == Guid.Empty)
+            {
+                return null;
+            }
+
+            return await _dBContext.Products.FirstOrDefaultAsync(x => x.ProductId == productId) ?? null;
+        }
     }
 }

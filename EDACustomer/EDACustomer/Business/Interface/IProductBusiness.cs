@@ -8,5 +8,6 @@ namespace EDACustomer.Business.Interface
         Task<List<ProductModel>> GetProductsList();
         Task<ProductModel> GetProductById(Guid productId);
         Task<List<ProductDDModel>> GetProductDDList();
+        Task<string> GetProductNameById(Guid productId);
     }
 }

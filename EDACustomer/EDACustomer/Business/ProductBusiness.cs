@@ -61,6 +61,16 @@ namespace EDACustomer.Business
             }
         }
 
+        public async Task<string> GetProductNameById(Guid productId)
+        {
+
+            var product = await _productRepository.GetProductNameById(productId);
+            if (product != null)
+            {
+                return product.Name;
+            }
+            return string.Empty;
+        }
 
     }
 }

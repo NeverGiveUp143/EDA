@@ -44,12 +44,7 @@ namespace EDAInventory.Services
                                 {
                                     var _productBusiness = scope.ServiceProvider.GetRequiredService<IProductBusiness>();
                                     Guid.TryParse(customer?.Product, out Guid productId);
-                                    int itemInCart = customer?.ItemInCart ?? 0;
-                                    string productName = await _productBusiness.GetProductById(productId);
-                                    if (!string.IsNullOrEmpty(productName) && customer != null)
-                                    {
-                                        customer.Product = productName;
-                                    }
+                                    int itemInCart = customer?.ItemInCart ?? 0;                                   
                                     string result = await _productBusiness.DeductStock(productId, itemInCart);
                                     var message = string.Empty;
                                     if (string.IsNullOrEmpty(result))

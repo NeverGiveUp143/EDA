@@ -8,5 +8,6 @@ namespace EDACustomer.Repository.Interface
         Task<List<Product>> GetProductsList();
         Task<Product?> GetProductById(Guid productId);
         Task<List<ProductDDModel>> GetProductDDList();
+        Task<Product?> GetProductNameById(Guid productId);
     }
 }
