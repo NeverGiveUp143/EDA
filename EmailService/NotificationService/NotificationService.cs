@@ -17,7 +17,6 @@ namespace EmailService
 
         public async Task SendEmailAsync<T>(T data, string mailBodyKey, string mailSubjectKey, string mailBodyMappingKey)
         {
-            // Extract values from config
             string toName = data?.GetType().GetProperty("Name")?.GetValue(data)?.ToString() ?? "";
             string toEmail = data?.GetType().GetProperty("Email")?.GetValue(data)?.ToString() ?? "";
             string mailSubject = _configBusiness.GetConfigValue<string>(mailSubjectKey) ?? "";

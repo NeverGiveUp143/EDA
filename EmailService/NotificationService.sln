@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{098CD5A2-2638-4190-B92C-55F6EA13256F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService", "EmailService\NotificationService.csproj", "{098CD5A2-2638-4190-B92C-55F6EA13256F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMqConsumer", "..\RabbitMQ\RabbitMqConsumer\RabbitMqConsumer\RabbitMqConsumer.csproj", "{76020E23-328F-4882-86F4-05F665D69DBB}"
 EndProject
