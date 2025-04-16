@@ -2,7 +2,6 @@
 using RabbitMQ.Client.Events;
 using RabbitMqConsumer.Interface;
 using System.Text;
-using System.Threading.Channels;
 
 namespace RabbitMqConsumer
 {
@@ -12,16 +11,18 @@ namespace RabbitMqConsumer
         private readonly string _username;
         private readonly string _password;
         private IConnection _connection;
-        private IChannel _channel;
+        private List<IChannel> _channels;
 
         public RabbitMQConsumer(string hostName, string username, string password)
         {
             _hostName = hostName;
             _username = username;
             _password = password;
+            _channels = new List<IChannel>();
         }
 
-        public async Task StartConsumingAsync(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)
+        // Start consuming from multiple queues (or a single one)
+        public async Task StartConsumingAsync(IEnumerable<(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)> consumerConfigs)
         {
             var factory = new ConnectionFactory
             {
@@ -31,56 +32,65 @@ namespace RabbitMqConsumer
             };
 
             _connection = await factory.CreateConnectionAsync();
-            _channel = await _connection.CreateChannelAsync();
 
-            // Declare the exchange
-            await _channel.ExchangeDeclareAsync(
-                exchange: exchangeName,
-                type: exchangeType,
-                durable: true,
-                autoDelete: false,
-                arguments: null);
+            foreach (var (queueName, exchangeName, exchangeType, messageHandler) in consumerConfigs)
+            {
+                var channel = await CreateConsumerChannelAsync(queueName, exchangeName, exchangeType, messageHandler);
+                _channels.Add(channel);
+            }
 
-            // Declare the queue
-            await _channel.QueueDeclareAsync(
-                queue: queueName,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
+            Console.WriteLine("All consumers started.");
+        }
 
-            // ❗️Bind the queue to the exchange
+        // Creates a consumer channel for each queue/exchange
+        private async Task<IChannel> CreateConsumerChannelAsync(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)
+        {
+            var channel = await _connection.CreateChannelAsync();
+
+            // Declare the exchange and queue
+            await channel.ExchangeDeclareAsync(exchangeName, exchangeType, durable: true, autoDelete: false);
+            await channel.QueueDeclareAsync(queueName, durable: true, exclusive: false, autoDelete: false);
+
             var bindingRoutingKey = exchangeType == ExchangeType.Fanout ? string.Empty : queueName;
-            await _channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: bindingRoutingKey);
+            await channel.QueueBindAsync(queueName, exchangeName, bindingRoutingKey);
 
-            // Set up consumer
-            var consumer = new AsyncEventingBasicConsumer(_channel);
+            // Set up the consumer
+            var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.ReceivedAsync += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-
-                await messageHandler(message);
-                await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+                try
+                {
+                    await messageHandler(message);
+                    await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing message: {ex.Message}");
+                    await channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                }
             };
 
-            await _channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+            await channel.BasicConsumeAsync(queueName, autoAck: false, consumer: consumer);
+            Console.WriteLine($"Consumer started for '{queueName}' bound to '{exchangeName}' ({exchangeType})");
 
-            Console.WriteLine($"✅ Started consuming from '{queueName}' bound to '{exchangeName}' ({exchangeType})");
+            return channel;
         }
 
-        public async Task DisposeAsync()
+        // Gracefully stop consumers and close channels
+        public async Task StopConsumingAsync()
         {
-            if (_channel != null)
+            foreach (var channel in _channels)
             {
-                await _channel.CloseAsync();
-                _channel.Dispose();
+                // Close and dispose each channel
+                await channel.CloseAsync();
+                channel.Dispose();
             }
-            if (_connection != null)
-            {
-                await _connection.CloseAsync();
-                _connection.Dispose();
-            }
+
+            _connection?.CloseAsync();
+            _connection?.Dispose();
+            Console.WriteLine(" All consumers stopped.");
         }
     }
 }

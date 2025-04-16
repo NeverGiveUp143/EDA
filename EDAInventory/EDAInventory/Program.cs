@@ -67,7 +67,7 @@ app.UseEndpoints(endpoints =>
     _ = endpoints.MapGet("/ws", async context =>
     {
         var wsService = app.Services.GetRequiredService<WebSocketOrderConsumer>();
-        await wsService.HandleWebSocket(context);
+        
     });
 });
 

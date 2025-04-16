@@ -23,10 +23,17 @@ namespace EmailService
         {
             try
             {
-                await _rabbitMqConsumer.StartConsumingAsync("order_queue", "order_exchange", ExchangeType.Topic,  HandleMessageAsync);
+                var consumerConfigs = new List<(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)>
+                {
+                    ("order_queue", "order_exchange", ExchangeType.Topic, HandleMessageAsync),
+                    ("notification_queue", "payment_exchange", ExchangeType.Fanout, HandleMessageAsync)
+                };
 
-                
-                await _rabbitMqConsumer.StartConsumingAsync("notification_queue", "payment_exchange", ExchangeType.Fanout, HandleMessageAsync);
+                // Just pass the entire list to the method
+                await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs);
+
+                // Wait for cancellation
+                await Task.Delay(Timeout.Infinite, stoppingToken);
             }
             catch (Exception ex)
             {
@@ -34,6 +41,8 @@ namespace EmailService
                 throw;
             }
         }
+
+
 
         private Task HandleMessageAsync(string message)
         {
@@ -59,7 +68,7 @@ namespace EmailService
                                     Constants.OrderPlacedSucessMailBody,
                                     Constants.OrderPlacedSucessMailSubject,
                                     Constants.OrderPlacedSucessMailMapping);
-                                break;                        
+                                break;
                             case "payment.sucess":
                                 await _notificationService.SendEmailAsync(customer,
                                     Constants.PaymentSucessMailBody,
