@@ -8,11 +8,11 @@ using RabbitMqConsumer.Interface;
 
 namespace EmailService
 {
-    public class WebSocketMailConsumer : BackgroundService
+    public class NotificationConsumer : BackgroundService
     {
         private readonly IRabbitMqConsumer _rabbitMqConsumer;
         private readonly IServiceProvider _serviceProvider;
-        public WebSocketMailConsumer(IRabbitMqConsumer rabbitMqConsumer, IServiceProvider serviceProvider)
+        public NotificationConsumer(IRabbitMqConsumer rabbitMqConsumer, IServiceProvider serviceProvider)
         {
             _rabbitMqConsumer = rabbitMqConsumer;
             _serviceProvider = serviceProvider;
@@ -30,7 +30,7 @@ namespace EmailService
                 };
 
                 // Just pass the entire list to the method
-                await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs);
+                await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs,stoppingToken);
 
                 // Wait for cancellation
                 await Task.Delay(Timeout.Infinite, stoppingToken);
@@ -54,9 +54,9 @@ namespace EmailService
             {
                 if (eventMessage != null && !string.IsNullOrEmpty(data))
                 {
-                    var customer = JsonConvert.DeserializeObject<CustomerModel>(data);
+                    var order = JsonConvert.DeserializeObject<OrderModel>(data);
 
-                    if (customer != null)
+                    if (order != null)
                     {
                         using var scope = _serviceProvider.CreateScope();
                         var _notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
@@ -64,19 +64,19 @@ namespace EmailService
                         switch (eventType)
                         {
                             case "order.updated":
-                                await _notificationService.SendEmailAsync(customer,
+                                await _notificationService.SendEmailAsync(order,
                                     Constants.OrderPlacedSucessMailBody,
                                     Constants.OrderPlacedSucessMailSubject,
                                     Constants.OrderPlacedSucessMailMapping);
                                 break;
                             case "payment.sucess":
-                                await _notificationService.SendEmailAsync(customer,
+                                await _notificationService.SendEmailAsync(order,
                                     Constants.PaymentSucessMailBody,
                                     Constants.PaymentSucessMailSubject,
                                     Constants.PaymentSucessMailMapping);
                                 break;
                             case "payment.failed":
-                                await _notificationService.SendEmailAsync(customer,
+                                await _notificationService.SendEmailAsync(order,
                                     Constants.PaymentFailedMailBody,
                                     Constants.PaymentFailedMailSubject,
                                     Constants.PaymentFailedMailMapping);
