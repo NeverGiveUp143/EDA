@@ -29,7 +29,7 @@ class Program
                             configuration["RabbitMQ:Password"] ?? "guest"
                         ));
 
-                services.AddHostedService<NotificationConsumer>();
+                services.AddHostedService<WebSocketMailConsumer>();
             })
             .Build();
 

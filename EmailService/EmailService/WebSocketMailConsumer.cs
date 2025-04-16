@@ -8,11 +8,11 @@ using RabbitMqConsumer.Interface;
 
 namespace EmailService
 {
-    public class NotificationConsumer : BackgroundService
+    public class WebSocketMailConsumer : BackgroundService
     {
         private readonly IRabbitMqConsumer _rabbitMqConsumer;
         private readonly IServiceProvider _serviceProvider;
-        public NotificationConsumer(IRabbitMqConsumer rabbitMqConsumer, IServiceProvider serviceProvider)
+        public WebSocketMailConsumer(IRabbitMqConsumer rabbitMqConsumer, IServiceProvider serviceProvider)
         {
             _rabbitMqConsumer = rabbitMqConsumer;
             _serviceProvider = serviceProvider;
@@ -30,7 +30,7 @@ namespace EmailService
                 };
 
                 // Just pass the entire list to the method
-                await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs,stoppingToken);
+                await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs);
 
                 // Wait for cancellation
                 await Task.Delay(Timeout.Infinite, stoppingToken);
