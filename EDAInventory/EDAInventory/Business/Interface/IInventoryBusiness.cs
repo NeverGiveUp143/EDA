@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EDAInventory.Business.Interface
 {
-    public interface IProductBusiness
+    public interface IInventoryBusiness
     {
         Task<List<ProductModel>> GetProductsList();
         Task<string> UpsertProduct(ProductModel? product, bool IsUpdate = false);
-        Task<string> DeductStock(Guid productId, int quantity);
+        Task<string> ModifyStock(Guid productId, int quantity);
         Task<string> GetProductById(Guid productId);
 
     }

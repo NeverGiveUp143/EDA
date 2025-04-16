@@ -3,17 +3,16 @@ using EDAInventory.Business.Interface;
 using EDAInventory.Models;
 using EDAInventory.Repository.Interface;
 using Helper.Models;
-using System.Globalization;
 
 namespace EDAInventory.Business
 {
-    public class ProductBusiness : IProductBusiness
+    public class InventoryBusiness : IInventoryBusiness
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IInventoryRepository _inventoryRepository;
         private readonly IConfigBusiness _configBusiness;
-        public ProductBusiness(IProductRepository productRepository , IConfigBusiness configBusiness)  
+        public InventoryBusiness(IInventoryRepository inventoryRepository , IConfigBusiness configBusiness)  
         {
-            _productRepository = productRepository;
+            _inventoryRepository = inventoryRepository;
             _configBusiness = configBusiness;
         }
         public async Task<List<ProductModel>> GetProductsList()
@@ -21,7 +20,7 @@ namespace EDAInventory.Business
             try
             {
                 List<ModelMapping> productModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.ProductModelMapping);
-                List<Product> DbValue = await _productRepository.GetProductsList();
+                List<Product> DbValue = await _inventoryRepository.GetProductsList();
                 List<ProductModel> products = Helper.ModelMapper.SourceModelToTargetModel<Product, ProductModel>(DbValue, productModelMappingsValue);
 
                 return products;
@@ -39,7 +38,7 @@ namespace EDAInventory.Business
             {
                 List<ModelMapping> productModelMappingsValue = _configBusiness.GetMappingModel<ModelMapping>(Constants.ProductModelMapping);
                 Product productDBObj = Helper.ModelMapper.SourceModelToTargetModel<ProductModel, Product>(product, productModelMappingsValue);
-                result = await _productRepository.UpsertProduct(productDBObj, IsUpdate);
+                result = await _inventoryRepository.UpsertProduct(productDBObj, IsUpdate);
             }
             catch (Exception ex)
             {
@@ -48,25 +47,23 @@ namespace EDAInventory.Business
             return result;
         }
 
-        public async Task<string> DeductStock(Guid productId, int quantity)
-        {
-            
-            var product = await _productRepository.GetProductById(productId);
+        public async Task<string> ModifyStock(Guid productId, int quantity)
+        {           
+            var product = await _inventoryRepository.GetProductById(productId);
             if (product == null)
             {
                 return $"Product {productId} not found in inventory.";
             }
 
             product.Quantity -= quantity;
-            await _productRepository.UpsertProduct(product,true);
+            await _inventoryRepository.UpsertProduct(product,true);
 
            return string.Empty;
         }
 
         public async Task<string> GetProductById(Guid productId) 
         { 
-
-            var product =  await _productRepository.GetProductById(productId);
+            var product =  await _inventoryRepository.GetProductById(productId);
             if (product != null)
             {
                 return product.Name;

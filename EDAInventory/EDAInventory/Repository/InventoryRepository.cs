@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EDAInventory.Repository
 {
-    public class ProductRepository : IProductRepository
+    public class InventoryRepository : IInventoryRepository
     {
         private readonly DBContext _dBContext;
-        public ProductRepository(DBContext dBContext)
+        public InventoryRepository(DBContext dBContext)
         {
             _dBContext = dBContext;
         }

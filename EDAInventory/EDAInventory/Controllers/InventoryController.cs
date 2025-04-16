@@ -8,8 +8,8 @@ namespace EDAInventory.Controllers
     [Route("[controller]")]
     public class InventoryController : ControllerBase
     {
-        private readonly IProductBusiness _productBusiness;
-        public InventoryController(IProductBusiness productBusiness)
+        private readonly IInventoryBusiness _productBusiness;
+        public InventoryController(IInventoryBusiness productBusiness)
         {
             _productBusiness = productBusiness;
         }
@@ -20,10 +20,10 @@ namespace EDAInventory.Controllers
             return await _productBusiness.GetProductsList();
         }
 
-        [HttpPut("UpdateProducts")]
-        public async Task<ActionResult<string>> UpdateProduct(ProductModel product)
+        [HttpPut("UpsertProduct")]
+        public async Task<ActionResult<string>> UpsertProduct(ProductModel product)
         {
-            return await _productBusiness.UpsertProduct (product,true);
+            return await _productBusiness.UpsertProduct(product,true);
         }
 
 

@@ -35,12 +35,12 @@ builder.Services.AddSingleton<IRabbitMqPublisher>(sp =>
         password: builder.Configuration["RabbitMQ:Password"] ?? "guest"
     ));
 
-builder.Services.AddHostedService<WebSocketOrderConsumer>();
+builder.Services.AddHostedService<OrderCheckOutConsumer>();
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(connectionString, options => options.CommandTimeout((int)TimeSpan.FromMinutes(30).TotalSeconds)), ServiceLifetime.Transient);
-builder.Services.AddScoped<IProductBusiness, ProductBusiness>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IInventoryBusiness, InventoryBusiness>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IConfigRepository, ConfigRepository>();
 builder.Services.AddScoped<IConfigBusiness, ConfigBusiness>();
 
@@ -66,7 +66,7 @@ app.UseEndpoints(endpoints =>
     _ = endpoints.MapControllers(); // Maps controller routes
     _ = endpoints.MapGet("/ws", async context =>
     {
-        var wsService = app.Services.GetRequiredService<WebSocketOrderConsumer>();
+        var wsService = app.Services.GetRequiredService<OrderCheckOutConsumer>();
         
     });
 });

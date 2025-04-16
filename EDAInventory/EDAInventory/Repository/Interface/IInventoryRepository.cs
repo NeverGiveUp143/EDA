@@ -3,7 +3,7 @@ using EDAInventory.Models;
 
 namespace EDAInventory.Repository.Interface
 {
-    public interface IProductRepository
+    public interface IInventoryRepository
     {
         Task<List<Product>> GetProductsList();
         Task<string> UpsertProduct(Product? product, bool IsUpdate = false);
