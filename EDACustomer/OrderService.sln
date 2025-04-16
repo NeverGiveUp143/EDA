@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDACustomer", "EDACustomer\EDACustomer.csproj", "{CA5C4849-8A75-446B-90EB-2D14DD3C7C07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderService", "EDACustomer\OrderService.csproj", "{CA5C4849-8A75-446B-90EB-2D14DD3C7C07}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDADBContext", "..\EDADBContext\EDADBContext\EDADBContext.csproj", "{D996DF68-B6DE-4EB8-BF7C-2FAAC8680CCB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helper", "..\Helper\Helper\Helper.csproj", "{AEDABFFE-F0E6-4E21-8FA6-A254C4F49E67}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR", "..\SignalR\SignalR\SignalR.csproj", "{204ADF29-12B9-4CCF-92F8-5CF0E833F26A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMQPublisher", "..\RabbitMQ\RabbitMQPublisher\RabbitMQPublisher\RabbitMQPublisher.csproj", "{693D6D3A-26AE-46A4-BE23-98291322EF01}"
 EndProject
@@ -33,10 +31,6 @@ Global
 		{AEDABFFE-F0E6-4E21-8FA6-A254C4F49E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEDABFFE-F0E6-4E21-8FA6-A254C4F49E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEDABFFE-F0E6-4E21-8FA6-A254C4F49E67}.Release|Any CPU.Build.0 = Release|Any CPU
-		{204ADF29-12B9-4CCF-92F8-5CF0E833F26A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{204ADF29-12B9-4CCF-92F8-5CF0E833F26A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{204ADF29-12B9-4CCF-92F8-5CF0E833F26A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{204ADF29-12B9-4CCF-92F8-5CF0E833F26A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{693D6D3A-26AE-46A4-BE23-98291322EF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{693D6D3A-26AE-46A4-BE23-98291322EF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{693D6D3A-26AE-46A4-BE23-98291322EF01}.Release|Any CPU.ActiveCfg = Release|Any CPU

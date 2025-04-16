@@ -1,7 +1,7 @@
-﻿using EDACustomer.Models;
+﻿using OrderService.Models;
 using EDADBContext.Models;
 
-namespace EDACustomer.Repository.Interface
+namespace OrderService.Repository.Interface
 {
     public interface IProductRepository
     {

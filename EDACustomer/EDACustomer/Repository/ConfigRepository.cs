@@ -1,8 +1,8 @@
-﻿using EDACustomer.Repository.Interface;
+﻿using OrderService.Repository.Interface;
 using EDADBContext;
 using Helper;
 
-namespace EDACustomer.Repository
+namespace OrderService.Repository
 {
     public class ConfigRepository : IConfigRepository
     {

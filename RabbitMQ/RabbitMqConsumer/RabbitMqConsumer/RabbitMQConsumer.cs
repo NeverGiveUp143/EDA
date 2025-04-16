@@ -21,8 +21,8 @@ namespace RabbitMqConsumer
             _channels = new List<IChannel>();
         }
 
-        // Start consuming from multiple queues (or a single one)
-        public async Task StartConsumingAsync(IEnumerable<(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)> consumerConfigs)
+        // Start consuming from multiple queues concurrently
+        public async Task StartConsumingAsync(IEnumerable<(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)> consumerConfigs, CancellationToken cancellationToken)
         {
             var factory = new ConnectionFactory
             {
@@ -33,17 +33,35 @@ namespace RabbitMqConsumer
 
             _connection = await factory.CreateConnectionAsync();
 
+            // Start consuming messages concurrently for each queue
+            var tasks = new List<Task>();
             foreach (var (queueName, exchangeName, exchangeType, messageHandler) in consumerConfigs)
             {
-                var channel = await CreateConsumerChannelAsync(queueName, exchangeName, exchangeType, messageHandler);
-                _channels.Add(channel);
+                var task = StartConsumingQueueAsync(queueName, exchangeName, exchangeType, messageHandler, cancellationToken);
+                tasks.Add(task);
             }
+
+            // Wait for all tasks to complete (they run concurrently)
+            await Task.WhenAll(tasks);
 
             Console.WriteLine("All consumers started.");
         }
 
+        // Consumer logic for each queue (runs asynchronously and independently)
+        private async Task StartConsumingQueueAsync(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler, CancellationToken cancellationToken)
+        {
+            var channel = await CreateConsumerChannelAsync(queueName, exchangeName, exchangeType, messageHandler, cancellationToken);
+            _channels.Add(channel);
+
+            // Keep consuming messages until cancellation is requested
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(100, cancellationToken); // Keep the task alive without blocking
+            }
+        }
+
         // Creates a consumer channel for each queue/exchange
-        private async Task<IChannel> CreateConsumerChannelAsync(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler)
+        private async Task<IChannel> CreateConsumerChannelAsync(string queueName, string exchangeName, string exchangeType, Func<string, Task> messageHandler, CancellationToken cancellationToken)
         {
             var channel = await _connection.CreateChannelAsync();
 
@@ -63,12 +81,12 @@ namespace RabbitMqConsumer
                 try
                 {
                     await messageHandler(message);
-                    await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+                    await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false); // Acknowledge the message
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error processing message: {ex.Message}");
-                    await channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                    await channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true); // Requeue on failure
                 }
             };
 
@@ -90,7 +108,7 @@ namespace RabbitMqConsumer
 
             _connection?.CloseAsync();
             _connection?.Dispose();
-            Console.WriteLine(" All consumers stopped.");
+            Console.WriteLine("All consumers stopped.");
         }
     }
 }

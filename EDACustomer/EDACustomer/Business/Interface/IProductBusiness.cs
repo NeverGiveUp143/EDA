@@ -1,7 +1,7 @@
-﻿using EDACustomer.Models;
+﻿using OrderService.Models;
 using EDADBContext.Models;
 
-namespace EDACustomer.Business.Interface
+namespace OrderService.Business.Interface
 {
     public interface IProductBusiness
     {

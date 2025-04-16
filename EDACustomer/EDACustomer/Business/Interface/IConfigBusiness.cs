@@ -1,4 +1,4 @@
-﻿namespace EDACustomer.Business.Interface
+﻿namespace OrderService.Business.Interface
 {
     public interface IConfigBusiness
     {

@@ -1,8 +1,8 @@
-﻿using EDACustomer.Business.Interface;
-using EDACustomer.Repository.Interface;
+﻿using OrderService.Business.Interface;
+using OrderService.Repository.Interface;
 using Newtonsoft.Json;
 
-namespace EDACustomer.Business
+namespace OrderService.Business
 {
 
     public class ConfigBusiness : IConfigBusiness

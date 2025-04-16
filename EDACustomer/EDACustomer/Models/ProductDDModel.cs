@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace EDACustomer.Models
+namespace OrderService.Models
 {
     public class ProductDDModel
     {

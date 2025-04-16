@@ -1,25 +1,25 @@
-﻿using EDACustomer.Models;
-using EDACustomer.Repository.Interface;
+﻿using OrderService.Models;
+using OrderService.Repository.Interface;
 using EDADBContext;
 using EDADBContext.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EDACustomer.Repository
+namespace OrderService.Repository
 {
-    public class CustomerRepository : ICustomerRepository
+    public class OrderRepository : IOrderRepository
     {
         private readonly DBContext _dBContext;
-        public CustomerRepository(DBContext dBContext)
+        public OrderRepository(DBContext dBContext)
         {
             _dBContext = dBContext;
         }
 
-        public async Task<List<CustomerModel>> GetCustomersList()
+        public async Task<List<OrderModel>> GetOrdersCheckOutList()
         {
             return await (from customer in _dBContext.Customer
                           join product in _dBContext.Products
                           on customer.ProductId equals product.ProductId
-                          select new CustomerModel
+                          select new OrderModel
                           {
                               Name = customer.Name,
                               Product = customer.ProductId.ToString(),
@@ -28,10 +28,9 @@ namespace EDACustomer.Repository
                               Id = customer.Id,
                               ItemInCart = customer.ItemInCart
                           }).ToListAsync();
-
         }
 
-        public async Task<string> AddCustomer(Customer customer)
+        public async Task<string> AddCheckoutOrder(Customer customer)
         {
             string tableName = Helper.Utlity.GetClassName<Customer>(customer);
             try

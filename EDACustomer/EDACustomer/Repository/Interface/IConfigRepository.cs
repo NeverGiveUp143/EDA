@@ -1,4 +1,4 @@
-﻿namespace EDACustomer.Repository.Interface
+﻿namespace OrderService.Repository.Interface
 {
     public interface IConfigRepository
     {

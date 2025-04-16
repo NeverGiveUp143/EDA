@@ -36,17 +36,21 @@ namespace RabbitMQPublisher
                 autoDelete: false,
                 arguments: null);
 
-            // Always declare and bind the queue
-            await channel.QueueDeclareAsync(
-                queue: queueName,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
+            var bindingRoutingKey = routingKey;
 
-            var bindingRoutingKey = exchangeType == ExchangeType.Fanout ? string.Empty : routingKey;
+            if (exchangeType == ExchangeType.Fanout)
+            {
+                await channel.QueueDeclareAsync(
+                      queue: queueName,
+                      durable: true,
+                      exclusive: false,
+                      autoDelete: false,
+                      arguments: null);
 
-            await channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: bindingRoutingKey);
+                bindingRoutingKey = string.Empty;
+
+                await channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: bindingRoutingKey);
+            }
 
             var body = Encoding.UTF8.GetBytes(message);
 

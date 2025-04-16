@@ -82,7 +82,7 @@ namespace EDAInventory.Services
             )
         };
 
-                await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs);
+                await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs, stoppingToken);
 
                 Console.WriteLine("WebSocketOrderConsumer started");
             }

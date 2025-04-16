@@ -1,11 +1,11 @@
-﻿using EDACustomer.Business.Interface;
-using EDACustomer.Models;
-using EDACustomer.Repository.Interface;
+﻿using OrderService.Business.Interface;
+using OrderService.Models;
+using OrderService.Repository.Interface;
 using EDADBContext.Models;
 using Helper.Models;
 
 
-namespace EDACustomer.Business
+namespace OrderService.Business
 {
     public class ProductBusiness : IProductBusiness
     {

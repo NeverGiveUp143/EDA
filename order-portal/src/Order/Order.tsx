@@ -7,11 +7,11 @@ import { Grid } from "../components/Grid";
 import { GridProps } from "../components/Grid/propTypes";
 import { Form } from "../components/Form";
 
-const Customer = () => {
+const Order = () => {
    
   const configData: Record<string, FieldConfig> = {
     "Name": { type: "TextField", defaultValue: "" , style : { height: "25px" }},
-    "Product": { type: "DropDown", defaultValue: "" , url : 'https://localhost:7249/Customer/GetProductDDList', style : { height: "34px" , width: "175px" }},
+    "Product": { type: "DropDown", defaultValue: "" , url : 'https://localhost:7249/Order/GetProductDDList', style : { height: "34px" , width: "175px" }},
     "ItemInCart": { type: "NumberField", defaultValue: 0,  style : { height: "25px" }},
     "Email": { type: "TextField", defaultValue: "" , style : { height: "25px" }}
   };
@@ -30,7 +30,7 @@ const Customer = () => {
   });
   
   const data : GridProps = {
-    url : 'https://localhost:7249/Customer/GetCustomers'
+    url : 'https://localhost:7249/Order/GetOrdersCheckoutList'
   } 
 
   const screenLoader = ({ screenId , RedirectToDefaultTab } : ScreenLoaderParams) => {
@@ -38,7 +38,7 @@ const Customer = () => {
       case "customersList":
         return <Grid {...data} />;
       case "customercheckout":
-        return <Form  postUrl="https://localhost:7249/Customer/AddCustomer" configData={configData}  formValidationSchema={formValidationSchema} RedirectToDefaultTab={RedirectToDefaultTab}/>;
+        return <Form  postUrl="https://localhost:7249/Order/AddCheckoutOrder" configData={configData}  formValidationSchema={formValidationSchema} RedirectToDefaultTab={RedirectToDefaultTab}/>;
       default:
         break;
     }
@@ -63,4 +63,4 @@ const Customer = () => {
 }
 
 
-export default Customer;
+export default Order;

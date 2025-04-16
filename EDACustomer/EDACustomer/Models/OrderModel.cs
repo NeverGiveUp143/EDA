@@ -1,7 +1,7 @@
 ﻿#nullable disable
-namespace EDACustomer.Models
+namespace OrderService.Models
 {
-    public class CustomerModel
+    public class OrderModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

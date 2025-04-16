@@ -1,4 +1,4 @@
-﻿namespace EDACustomer
+﻿namespace OrderService
 {
     public static class Constants
     {

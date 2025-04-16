@@ -1,11 +1,11 @@
-﻿using EDACustomer.Models;
-using EDACustomer.Repository.Interface;
+﻿using OrderService.Models;
+using OrderService.Repository.Interface;
 using EDADBContext;
 using EDADBContext.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
-namespace EDACustomer.Repository
+namespace OrderService.Repository
 {
     public class ProductRepository : IProductRepository
     {

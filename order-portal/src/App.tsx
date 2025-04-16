@@ -1,10 +1,10 @@
 import './App.css';
-import Customer from './Customer/Customer';
+import Order from './Order/Order';
 
 function App() {
   return (
     <div className="App">
-      <Customer/>
+      <Order/>
     </div>
   );
 }
