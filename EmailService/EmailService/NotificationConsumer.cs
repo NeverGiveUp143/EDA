@@ -32,7 +32,7 @@ namespace EmailService
                 // Just pass the entire list to the method
                 await _rabbitMqConsumer.StartConsumingAsync(consumerConfigs,stoppingToken);
 
-                // Wait for cancellation
+                
                 await Task.Delay(Timeout.Infinite, stoppingToken);
             }
             catch (Exception ex)

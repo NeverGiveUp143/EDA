@@ -41,10 +41,7 @@ namespace RabbitMqConsumer
                 tasks.Add(task);
             }
 
-            // Wait for all tasks to complete (they run concurrently)
             await Task.WhenAll(tasks);
-
-            Console.WriteLine("All consumers started.");
         }
 
         // Consumer logic for each queue (runs asynchronously and independently)
@@ -56,7 +53,7 @@ namespace RabbitMqConsumer
             // Keep consuming messages until cancellation is requested
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(100, cancellationToken); // Keep the task alive without blocking
+                await Task.Delay(100, cancellationToken); 
             }
         }
 
@@ -91,8 +88,7 @@ namespace RabbitMqConsumer
             };
 
             await channel.BasicConsumeAsync(queueName, autoAck: false, consumer: consumer);
-            Console.WriteLine($"Consumer started for '{queueName}' bound to '{exchangeName}' ({exchangeType})");
-
+         
             return channel;
         }
 
